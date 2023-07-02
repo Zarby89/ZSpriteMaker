@@ -1,0 +1,336 @@
+<SyntaxDefinition name="ASM"
+        xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+    <Color name="Comment" foreground="#6A993E" />
+    <Color name="String" foreground="#CE916A" />
+    
+    <!-- This is the main ruleset. keyword-->
+    <RuleSet>
+        <Span color="Comment" begin=";" />
+        
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End> 
+            <RuleSet>
+                <!-- nested span for escape sequences -->
+                <Span begin="\\" end="." />
+            </RuleSet>
+        </Span>
+        
+        <Keywords fontWeight="bold" foreground="#8CDCDA">
+            <Word>if</Word>
+            <Word>else</Word>
+            <Word>elsif</Word>
+            <Word>endif</Word>
+            <Word>print</Word>
+            <Word>error</Word>
+            <Word>freecode</Word>
+            <Word>while</Word>
+            <Word>db</Word>
+            <Word>dw</Word>
+            <Word>dl</Word>
+            <Word>function</Word>
+            <Word>read1</Word>
+            <Word>read2</Word>
+            <Word>read3</Word>
+            <Word>read4</Word>
+            <Word>readfile1</Word>
+            <Word>readfile2</Word>
+            <Word>readfile3</Word>
+            <Word>readfile4</Word>
+            <Word>canread1</Word>
+            <Word>canread2</Word>
+            <Word>canread3</Word>
+            <Word>canread4</Word>
+            <Word>canread</Word>
+            <Word>canreadfile1</Word>
+            <Word>canreadfile2</Word>
+            <Word>canreadfile3</Word>
+            <Word>canreadfile4</Word>
+            <Word>canreadfile</Word>
+            <Word>filesize</Word>
+            <Word>getfilestatus</Word>
+            <Word>sqrt</Word>
+            <Word>sin</Word>
+            <Word>cos</Word>
+            <Word>tan</Word>
+            <Word>asin</Word>
+            <Word>acos</Word>
+            <Word>atan</Word>
+            <Word>arcsin</Word>
+            <Word>arccos</Word>
+            <Word>arctan</Word>
+            <Word>log</Word>
+            <Word>log2</Word>
+            <Word>log10</Word>
+            <Word>snestopc</Word>
+            <Word>pctosnes</Word>
+            <Word>min</Word>
+            <Word>max</Word>
+            <Word>clamp</Word>
+            <Word>safediv</Word>
+            <Word>select</Word>
+            <Word>not</Word>
+            <Word>bank</Word>
+            <Word>equal</Word>
+            <Word>notequal</Word>
+            <Word>less</Word>
+            <Word>lessequal</Word>
+            <Word>greater</Word>
+            <Word>greaterequal</Word>
+            <Word>and</Word>
+            <Word>or</Word>
+            <Word>nand</Word>
+            <Word>nor</Word>
+            <Word>xor</Word>
+            <Word>round</Word>
+            <Word>floor</Word>
+            <Word>ceil</Word>
+            <Word>defined</Word>
+            <Word>sizeof</Word>
+            <Word>objectsize</Word>
+            <Word>datasize</Word>
+            <Word>stringsequal</Word>            
+            <Word>stringsequalnocase</Word>
+            <Word>macro</Word>
+            <Word>endmacro</Word>
+            <Word>assert</Word>
+            <Word>namespace</Word>
+            <Word>struct</Word>
+            <Word>endstruct</Word>
+            <Word>pushpc</Word>
+            <Word>pullpc</Word>
+            <Word>base</Word>
+            <Word>skip</Word>
+            <Word>org</Word>
+            <Word>math</Word>
+            <Word>optimize</Word>
+            <Word>bank</Word>
+            <Word>warnpc</Word>
+            <Word>incbin</Word>
+            <Word>incsrc</Word>
+            <Word>align</Word>
+            <Word>fill</Word>
+            <Word>fillbyte</Word>
+            <Word>include</Word>
+            <!-- ... -->
+        </Keywords>
+        
+
+        <Keywords fontWeight="bold" foreground="#3F9CCB">
+            <Word>adc</Word>
+            <Word>and</Word>
+            <Word>asl</Word>
+            <Word>bcc</Word>
+            <Word>bcs</Word>
+            <Word>beq</Word>
+            <Word>bne</Word>
+            <Word>bit</Word>
+            <Word>bmi</Word>
+            <Word>bpl</Word>
+            <Word>bra</Word>
+            <Word>brk</Word>
+            <Word>brl</Word>
+            <Word>bvc</Word>
+            <Word>bvs</Word>
+            <Word>clc</Word>
+            <Word>cld</Word>
+            <Word>cli</Word>
+            <Word>clv</Word>
+            <Word>cmp</Word>
+            <Word>cop</Word>
+            <Word>cpx</Word>
+            <Word>cpy</Word>
+            <Word>dec</Word>
+            <Word>dex</Word>
+            <Word>dey</Word>
+            <Word>eor</Word>
+            <Word>inc</Word>
+            <Word>inx</Word>
+            <Word>iny</Word>
+            <Word>jmp</Word>
+            <Word>jml</Word>
+            <Word>jsr</Word>
+            <Word>jsl</Word>
+            <Word>lda</Word>
+            <Word>ldx</Word>
+            <Word>ldy</Word>
+            <Word>lsr</Word>
+            <Word>mvn</Word>
+            <Word>mvp</Word>
+            <Word>nop</Word>
+            <Word>ora</Word>
+            <Word>pea</Word>
+            <Word>pei</Word>
+            <Word>per</Word>
+            <Word>pha</Word>
+            <Word>phb</Word>
+            <Word>phd</Word>
+            <Word>phk</Word>
+            <Word>php</Word>
+            <Word>phx</Word>
+            <Word>phy</Word>
+            <Word>pla</Word>
+            <Word>plb</Word>
+            <Word>pld</Word>
+            <Word>plp</Word>
+            <Word>plx</Word>
+            <Word>ply</Word>
+            <Word>rep</Word>
+            <Word>rol</Word>
+            <Word>ror</Word>
+            <Word>rti</Word>
+            <Word>rtl</Word>
+            <Word>rts</Word>
+            <Word>sbc</Word>
+            <Word>sec</Word>
+            <Word>sed</Word>
+            <Word>sei</Word>
+            <Word>sep</Word>
+            <Word>sta</Word>
+            <Word>stp</Word>
+            <Word>stx</Word>
+            <Word>sty</Word>
+            <Word>stz</Word>
+            <Word>tax</Word>
+            <Word>tay</Word>
+            <Word>tcd</Word>
+            <Word>tcs</Word>
+            <Word>tdc</Word>
+            <Word>trb</Word>
+            <Word>tsb</Word>
+            <Word>tsc</Word>
+            <Word>tsx</Word>
+            <Word>txa</Word>
+            <Word>txs</Word>
+            <Word>txy</Word>
+            <Word>tya</Word>
+            <Word>tyx</Word>
+            <Word>wai</Word>
+            <Word>wdm</Word>
+            <Word>xba</Word>
+            <Word>xce</Word>
+
+            <Word>ADC</Word>
+            <Word>AND</Word>
+            <Word>ASL</Word>
+            <Word>BCC</Word>
+            <Word>BCS</Word>
+            <Word>BEQ</Word>
+            <Word>BIT</Word>
+            <Word>BNE</Word>
+            <Word>BMI</Word>
+            <Word>BPL</Word>
+            <Word>BRA</Word>
+            <Word>BRK</Word>
+            <Word>BRL</Word>
+            <Word>BVC</Word>
+            <Word>BVS</Word>
+            <Word>CLC</Word>
+            <Word>CLD</Word>
+            <Word>CLI</Word>
+            <Word>CLV</Word>
+            <Word>CMP</Word>
+            <Word>COP</Word>
+            <Word>CPX</Word>
+            <Word>CPY</Word>
+            <Word>DEC</Word>
+            <Word>DEX</Word>
+            <Word>DEY</Word>
+            <Word>EOR</Word>
+            <Word>INC</Word>
+            <Word>INX</Word>
+            <Word>INY</Word>
+            <Word>JMP</Word>
+            <Word>JML</Word>
+            <Word>JSR</Word>
+            <Word>JSL</Word>
+            <Word>LDA</Word>
+            <Word>LDX</Word>
+            <Word>LDY</Word>
+            <Word>LSR</Word>
+            <Word>MVN</Word>
+            <Word>MVP</Word>
+            <Word>NOP</Word>
+            <Word>ORA</Word>
+            <Word>PEA</Word>
+            <Word>PEI</Word>
+            <Word>PER</Word>
+            <Word>PHA</Word>
+            <Word>PHB</Word>
+            <Word>PHD</Word>
+            <Word>PHK</Word>
+            <Word>PHP</Word>
+            <Word>PHX</Word>
+            <Word>PHY</Word>
+            <Word>PLA</Word>
+            <Word>PLB</Word>
+            <Word>PLD</Word>
+            <Word>PLP</Word>
+            <Word>PLX</Word>
+            <Word>PLY</Word>
+            <Word>REP</Word>
+            <Word>ROL</Word>
+            <Word>ROR</Word>
+            <Word>RTI</Word>
+            <Word>RTL</Word>
+            <Word>RTS</Word>
+            <Word>SBC</Word>
+            <Word>SEC</Word>
+            <Word>SED</Word>
+            <Word>SEI</Word>
+            <Word>SEP</Word>
+            <Word>STA</Word>
+            <Word>STP</Word>
+            <Word>STX</Word>
+            <Word>STY</Word>
+            <Word>STZ</Word>
+            <Word>TAX</Word>
+            <Word>TAY</Word>
+            <Word>TCD</Word>
+            <Word>TCS</Word>
+            <Word>TDC</Word>
+            <Word>TRB</Word>
+            <Word>TSB</Word>
+            <Word>TSC</Word>
+            <Word>TSX</Word>
+            <Word>TXA</Word>
+            <Word>TXS</Word>
+            <Word>TXY</Word>
+            <Word>TYA</Word>
+            <Word>TYX</Word>
+            <Word>WAI</Word>
+            <Word>WDM</Word>
+            <Word>XBA</Word>
+            <Word>XCE</Word>
+            <Word>:</Word>
+            <Word>.b</Word>
+            <Word>.w</Word>
+            <Word>.l</Word>
+            <!-- ... -->
+        </Keywords>
+        
+        <!-- Digits -->
+        <Rule foreground="#B0B0B0">
+        [\%][0-9a-zA-Z]+ # macros
+        </Rule>
+
+        <Rule foreground="#46C8A0">
+        [\!][0-9a-zA-Z]+ # defines
+        </Rule>
+
+
+        <Rule foreground="#DCDCAA">
+        [\$][0-9a-fA-F]+  # address
+        </Rule>
+        <Rule foreground="#CAA0D7">
+        [\#][\$][0-9a-fA-F]+  # numeric hex
+        |
+        [\#][0-9]+  # numeric
+        |     \b
+            (    \d+(\.[0-9]+)?   #number with optional floating point
+            |    \.[0-9]+         #or just starting with floating point
+            )
+            ([eE][+-]?[0-9]+)? # optional exponent
+        </Rule>
+    </RuleSet>
+</SyntaxDefinition>

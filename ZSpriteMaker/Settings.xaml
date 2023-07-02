@@ -1,0 +1,77 @@
+﻿<Window x:Class="ZSpriteMaker.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZSpriteMaker"
+        xmlns:p="clr-namespace:ZSpriteMaker.Properties"
+        mc:Ignorable="d"
+        Title="Settings" Height="351" Width="567"
+        Style="{DynamicResource CustomWindowStyle}" WindowStyle="ToolWindow" Loaded="Window_Loaded">
+    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" >
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
+            <Label Content="Emulator Path " MinWidth="100"/>
+            <TextBox Text="{Binding Source={x:Static p:Settings.Default}, Path=emulatorPath, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="432" MaxWidth="432"/>
+            <Button Content="..." Width="32" Height="20" Click="emulatorPathButton_Click"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
+            <Label Content="ROM Path " MinWidth="100"/>
+            <TextBox Text="{Binding Source={x:Static p:Settings.Default}, Path=romPath, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="432" MaxWidth="432"/>
+            <Button Content="..." Width="32" Height="20" Click="romPathButton_Click"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
+            <Label Content="Asar Path " MinWidth="100"/>
+            <TextBox Text="{Binding Source={x:Static p:Settings.Default}, Path=asarPath, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="432" MaxWidth="432"/>
+            <Button Content="..." Width="32" Height="20" Click="asarPathButton_Click"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
+            <Separator MinWidth="464" Width="565"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
+            <Label Content="Grid Color " MinWidth="100"/>
+            <Rectangle x:Name="gridColorRect" Fill="White" Stroke="Black" MinWidth="24"/>
+            <Label x:Name="GridRLabel" Content="R 000" MinWidth="40"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="GridSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=gridR, Mode=TwoWay}"/>
+            <Label x:Name="GridGLabel" Content="G 000" MinWidth="41"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="GridSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=gridG, Mode=TwoWay}"/>
+            <Label x:Name="GridBLabel" Content="B 000" MinWidth="40"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="GridSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=gridB, Mode=TwoWay}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
+            <Label Content="Selection Color " MinWidth="100"/>
+            <Rectangle x:Name="selColorRect" Fill="White" Stroke="Black" MinWidth="24"/>
+            <Label x:Name="SelRLabel" Content="R 000" MinWidth="40"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="SelSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=selR, Mode=TwoWay}"/>
+            <Label x:Name="SelGLabel" Content="G 000" MinWidth="41"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="SelSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=selG, Mode=TwoWay}"/>
+            <Label x:Name="SelBLabel" Content="B 000" MinWidth="40"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="SelSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=selB, Mode=TwoWay}"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
+            <Label Content="Hitbox Color " MinWidth="100"/>
+            <Rectangle x:Name="hitColorRect" Fill="White" Stroke="Black" MinWidth="24"/>
+            <Label x:Name="HitRLabel" Content="R 000" MinWidth="40"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="HitSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=hitboxR, Mode=TwoWay}"/>
+            <Label x:Name="HitGLabel" Content="G 000" MinWidth="41"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="HitSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=hitboxG, Mode=TwoWay}"/>
+            <Label x:Name="HitBLabel" Content="B 000" MinWidth="40"/>
+            <Slider Width="100" VerticalAlignment="Center" Margin="2,0,0,0" Maximum="255" ValueChanged="HitSliders_ValueChanged" Value="{Binding Source={x:Static p:Settings.Default}, Path=hitboxB, Mode=TwoWay}"/>
+        </StackPanel>
+        
+        <Separator MinWidth="464" Width="565" Height="8" DockPanel.Dock="Top"/>
+        <CheckBox DockPanel.Dock="Top" Content="Enable 4 gfx box (advanced settings these are not changeable without ASM in game)"/>
+        <Separator MinWidth="464" Width="565" Height="8" DockPanel.Dock="Top"/>
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
+            <Label Content="Code editor Font settings  " MinWidth="100"/>
+            <Button Width="80" Content="Change Font" Click="ChangeFont_Click"/>
+        </StackPanel>
+        <Label x:Name="previewLabelFont" Content="This is a Preview text of the selected font" MinWidth="100" DockPanel.Dock="Top"/>
+        <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+            <Button Content="Ok" Width="64" Height="20" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="2 0 2 0" Click="OKButton_Click"/>
+            <Button Content="Cancel" Width="64" Height="20" DockPanel.Dock="Right" HorizontalAlignment="Right" IsCancel="True" VerticalAlignment="Top" Margin="2 0 2 0" Click="CancelButton_Click"/>
+        </StackPanel>
+        
+    </DockPanel>
+    
+</Window>

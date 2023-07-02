@@ -1,0 +1,495 @@
+﻿<Window x:Class="ZSpriteMaker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:ZSpriteMaker.Properties"
+        xmlns:local="clr-namespace:ZSpriteMaker"
+        xmlns:control="clr-namespace:ZSpriteMaker"
+        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        mc:Ignorable="d"
+        Title="ZSprite Maker" Height="824" Width="1280"
+        Style="{DynamicResource CustomWindowStyle}" Loaded="Window_Loaded">
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="ApplicationCommands.New"/>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="ApplicationCommands.Open"/>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="ApplicationCommands.Save"/>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="ApplicationCommands.Undo"/>
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="ApplicationCommands.Redo"/>
+        <KeyBinding Key="X" Modifiers="Ctrl" Command="ApplicationCommands.Cut"/>
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="ApplicationCommands.Copy"/>
+        <KeyBinding Key="V" Modifiers="Ctrl" Command="ApplicationCommands.Paste"/>
+        <KeyBinding Key="A" Modifiers="Ctrl" Command="ApplicationCommands.SelectAll"/>
+        <KeyBinding Key="Delete" Command="ApplicationCommands.Delete"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Close" Executed="Exit_Command"/>
+        <CommandBinding Command="ApplicationCommands.Open" Executed="Open_Command"/>
+        <CommandBinding Command="ApplicationCommands.Undo" Executed="Undo_Command"/>
+        <CommandBinding Command="ApplicationCommands.Redo" Executed="Redo_Command"/>
+        <CommandBinding Command="ApplicationCommands.Cut" Executed="Cut_Command"/>
+        <CommandBinding Command="ApplicationCommands.Copy" Executed="Copy_Command"/>
+        <CommandBinding Command="ApplicationCommands.Paste" Executed="Paste_Command"/>
+        <CommandBinding Command="ApplicationCommands.SelectAll" Executed="SelectAll_Command"/>
+        <CommandBinding Command="ApplicationCommands.Delete" Executed="Delete_Command"/>
+        <CommandBinding Command="ApplicationCommands.New" Executed="New_Command"/>
+        <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Command"/>
+    </Window.CommandBindings>
+
+    
+
+    <DockPanel x:Name="mainDockPanel" LastChildFill="False">
+
+
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" InputGestureText="Ctrl+N" Command="ApplicationCommands.New" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <MenuItem Header="_Open" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <MenuItem Header="_Save" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <MenuItem Header="_Export Asm" Click="ExportAsm_Click" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <Separator/>
+                <MenuItem Header="_Exit" InputGestureText="Ctrl+Q" Command="ApplicationCommands.Close" Template="{DynamicResource SingleDropDownMenuItem}"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Undo" InputGestureText="Ctrl+Z" Command="ApplicationCommands.Undo" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <MenuItem Header="_Redo" InputGestureText="Ctrl+Y" Command="ApplicationCommands.Redo" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <Separator/>
+                <MenuItem Header="_Cut"  InputGestureText="Ctrl+X" Command="ApplicationCommands.Cut" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <MenuItem Header="_Copy" InputGestureText="Ctrl+C" Command="ApplicationCommands.Copy" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <MenuItem Header="_Paste" InputGestureText="Ctrl+V" Command="ApplicationCommands.Paste" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <Separator/>
+                <MenuItem Header="_Select All"  InputGestureText="Ctrl+A" Command="ApplicationCommands.SelectAll" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <MenuItem Header="_Delete"  InputGestureText="Delete" Command="ApplicationCommands.Delete" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                
+            </MenuItem>
+            <MenuItem Header="_Preferences">
+                <MenuItem Header="_Dark Theme" Checked="DarkTheme_Checked" Unchecked="DarkTheme_Unchecked" IsCheckable="true" Template="{DynamicResource SingleDropDownMenuItem}" IsChecked="True"/>
+                <MenuItem Header="_Settings" Template="{DynamicResource SingleDropDownMenuItem}" Click="SettingMenu_Click"/>
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Zoom" Template="{DynamicResource SingleDropDownMenuItem}">
+                    <MenuItem Header="_100%" Template="{DynamicResource SingleDropDownMenuItem}" Click="Zoom100_Click"/>
+                    <MenuItem Header="_200%" Template="{DynamicResource SingleDropDownMenuItem}" Click="Zoom200_Click"/>
+                    <MenuItem Header="_300%" Template="{DynamicResource SingleDropDownMenuItem}" Click="Zoom300_Click"/>
+                    <MenuItem Header="_400%" Template="{DynamicResource SingleDropDownMenuItem}" Click="Zoom400_Click"/>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <ToolBar VerticalAlignment="Top" DockPanel.Dock="Top" Height="24" HorizontalAlignment="Stretch">
+            <ToggleButton HorizontalAlignment="Left" VerticalAlignment="Center" Width="18" Height="18" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=showBack, Mode=TwoWay}" Checked="HeaderButtonToggled_CheckedChanged" Unchecked="HeaderButtonToggled_CheckedChanged" >
+                <Image Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Image.Source>
+                        <BitmapImage UriSource="Images/BGimg.png"/>
+                    </Image.Source>
+                </Image>
+            </ToggleButton>
+
+            <ToggleButton HorizontalAlignment="Left" VerticalAlignment="Center" Width="18" Height="18" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=showGrid, Mode=TwoWay}"  Checked="HeaderButtonToggled_CheckedChanged" Unchecked="HeaderButtonToggled_CheckedChanged">
+
+                <Image Width="14" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <Image.Source>
+                        <BitmapImage UriSource="Images/Gridimg.png"/>
+                    </Image.Source>
+                </Image>
+            </ToggleButton>
+
+            
+
+            <RibbonTextBox x:Name="gridSizeBox" Width="24" MaxWidth="24" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Text="16" TextChanged="GridSize_TextChanged" ToolTip="Size of the grid"/>
+
+
+            <ToggleButton HorizontalAlignment="Left" VerticalAlignment="Center" Width="18" Height="18" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=snapGrid, Mode=TwoWay}"  Checked="HeaderButtonToggled_CheckedChanged" Unchecked="HeaderButtonToggled_CheckedChanged">
+
+                <Image Width="14" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <Image.Source>
+                        <BitmapImage UriSource="Images/snapgridimg.png"/>
+                    </Image.Source>
+                </Image>
+            </ToggleButton>
+
+            <RibbonTextBox x:Name="snapSizeBox" Width="24" MaxWidth="24" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Text="16" TextChanged="SnapSize_TextChanged" ToolTip="Size of the snap"/>
+
+
+            <ToggleButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="18" Height="18" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=showCenter, Mode=TwoWay}" Checked="HeaderButtonToggled_CheckedChanged" Unchecked="HeaderButtonToggled_CheckedChanged" ToolTip="Show Center" >
+                <Image Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Image.Source>
+                        <BitmapImage UriSource="Images/centerimg.png"/>
+                    </Image.Source>
+                </Image>
+            </ToggleButton>
+
+            <ToggleButton HorizontalAlignment="Left" VerticalAlignment="Center" Width="18" Height="18" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=showOnion, Mode=TwoWay}" Checked="HeaderButtonToggled_CheckedChanged" Unchecked="HeaderButtonToggled_CheckedChanged" ToolTip="Show Onion skin">
+                <Image Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Image.Source>
+                        <BitmapImage UriSource="Images/onionimg.png"/>
+                    </Image.Source>
+                </Image>
+            </ToggleButton>
+
+            <ToggleButton HorizontalAlignment="Left" VerticalAlignment="Center" Width="18" Height="18" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=showHitbox, Mode=TwoWay}" Checked="HeaderButtonToggled_CheckedChanged" Unchecked="HeaderButtonToggled_CheckedChanged" ToolTip="Show Hitbox">
+                <Image Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Image.Source>
+                        <BitmapImage UriSource="Images/hitbox.png"/>
+                    </Image.Source>
+                </Image>
+            </ToggleButton>
+
+
+
+            <Button HorizontalAlignment="Left" VerticalAlignment="Center" Width="18" Height="18" Click="ButtonPlaytest_Click" >
+                <Image Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Image.Source>
+                        <BitmapImage UriSource="Images/Play.png"/>
+                    </Image.Source>
+                </Image>
+            </Button>
+            <TextBlock x:Name="errorLabel" Text="Errors when assembling playtest file, error occured on line xx of action xx" Foreground="Red"/>
+        </ToolBar>
+        
+        
+        <StackPanel x:Name="mainStackPanel" Margin="4,10,10,4" DockPanel.Dock="Left" Orientation="Vertical" Width="512">
+
+            <Grid x:Name="gridMainScreen" Focusable="True">
+                <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MainScreenBack" HorizontalAlignment="Left" Height="448" Margin="0,0,0,0" VerticalAlignment="Top" Width="512" Panel.ZIndex="1" />
+                <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MainScreenLayer" HorizontalAlignment="Left" Height="448" Margin="0,0,0,0" VerticalAlignment="Top" Width="512" Opacity="0.40" Panel.ZIndex="2"/>
+                <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MainScreen" HorizontalAlignment="Left" Height="448" Margin="0,0,0,0" VerticalAlignment="Top" Width="512" MouseDown="MainScreen_MouseDown" MouseUp="MainScreen_MouseUp" MouseMove="MainScreen_MouseMove" Panel.ZIndex="3" />
+
+
+            </Grid>
+            <GroupBox x:Name="groupboxProperty" Width="512" Height="64" Header="Selected Tile Properties" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Height="24" VerticalAlignment="Center" Margin="0,0,-2,0">
+                    <Label x:Name="tileIdLabel" Content="Tile ID  00" Height="32" MinWidth="64" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 4 0"/>
+                    <CheckBox x:Name="mirrorXCheckbox" Content="Mirror X" Margin="4 0 4 0" Checked="MirrorXCheckBox_CheckedChanged"  Unchecked="MirrorXCheckBox_CheckedChanged"/>
+                    <CheckBox x:Name="mirrorYCheckbox" Content="Mirror Y" Margin="4 0 4 0" Checked="MirrorYCheckBox_CheckedChanged"  Unchecked="MirrorYCheckBox_CheckedChanged"/>
+                    <CheckBox x:Name="sizeCheckbox" Content="16x16" Margin="4 0 4 0"  Checked="SizeTileCheckBox_CheckedChanged" Unchecked="SizeTileCheckBox_CheckedChanged"/>
+                    <Label Content="Palette" Margin="0 0 0 0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="paletteTextbox" Text="0" VerticalAlignment="Center" MaxLength="2" Margin="2 0 4 0" MinWidth="20" TextChanged="PaletteTextbox_TextChanged" MouseWheel="PaletteTextbox_MouseWheel"/>
+                    <Label Content="X" Margin="0 0 0 0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="oamXTextbox" Text="00" VerticalAlignment="Center" MaxLength="3" Margin="2 0 4 0" MinWidth="26" TextChanged="OamPosTextbox_TextChanged" MouseWheel="OamPosTextbox_MouseWheel"/>
+                    <Label Content="Y" Margin="0 0 0 0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="oamYTextbox" Text="00" VerticalAlignment="Center" MaxLength="3" Margin="2 0 4 0" MinWidth="26" TextChanged="OamPosTextbox_TextChanged" MouseWheel="OamPosTextbox_MouseWheel"/>
+                    <Label Content="Z" Margin="0 0 0 0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="oamZTextbox" Text="00" VerticalAlignment="Center" MaxLength="3" Margin="2 0 4 0" MinWidth="26" TextChanged="OamPosTextbox_TextChanged" MouseWheel="OamPosTextbox_MouseWheel"/>
+                </StackPanel>
+            </GroupBox>
+            <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Height="24" Width="512" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <Button Content="&lt;" Width="24" Click="DecreaseFrameButton_Click"/>
+                <Slider x:Name="FrameSlider" Maximum="47" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Center" Width="380" Margin="4 0 4 0" MouseWheel="FrameSlider_MouseWheel"/>
+                <Button Content="&gt;" Width="24" Click="IncreaseFrameButton_Click"/>
+                <Label x:Name="SliderLabel" Content="Frame" DockPanel.Dock="Top" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox x:Name="sliderFramebox" Text="00" MaxLength="2" MinWidth="26" TextChanged="sliderFramebox_Changed"/>
+            </StackPanel>
+            <GroupBox Width="512" Height="64" Header="Animation Preview Properties - Decimal Values" HorizontalAlignment="Center">
+                <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Height="24" Width="512" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Label Content="Frame Range" DockPanel.Dock="Top" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0 0 0 0"/>
+                    <TextBox x:Name="animminTextbox" Text="00" VerticalAlignment="Center" MaxLength="2" Margin="4 3 2 0" MinWidth="20"/>
+                    <TextBox x:Name="animmaxTextbox" Text="00" VerticalAlignment="Center" MaxLength="2" Margin="2 3 4 0" MinWidth="20"/>
+                    <Button Width="24" Margin="2 0 4 0" Click="PlayAnimation_Click">
+                        <Image x:Name="BtnImagePlay">
+                            <Image.Source>
+                                <BitmapImage UriSource="Images/Play.png"/>
+                            </Image.Source>
+                        </Image>
+                    </Button>
+                    <Label Content="Frame Wait" DockPanel.Dock="Top" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0 0 0 0"/>
+                    <TextBox x:Name="animSpeedTextbox" Text="008" VerticalAlignment="Center" MaxLength="3" Margin="2 3 4 0" MinWidth="26" TextChanged="AnimSpeedTextbox_TextChanged"/>
+                    <Button Content="Add Anim." Margin="2 3 4 0" Width="72" Click="AddAnimButton_Click"/>
+                    <Button Content="Update Anim." Margin="2 3 4 0" Width="80" Click="UpdateAnimButton_Click"/>
+                    <Button Content="Del Anim." Margin="2 3 4 0" Width="72" Click="DelAnimButton_Click"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Width="512" Height="114" HorizontalAlignment="Center">
+                <GroupBox.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Animation Groups - "/>
+                        <TextBox MinWidth="300" x:Name="animnameTextBox"/>
+                    </StackPanel>
+                </GroupBox.Header>
+                <ListBox x:Name="animationgroupListbox" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="AnimationgroupListbox_SelectionChanged"/>
+            </GroupBox>
+
+        </StackPanel>
+
+        <TabControl DockPanel.Dock="Top">
+            <TabItem Header="Tiles">
+                <DockPanel>
+                    <StackPanel x:Name="sheetPanel" Margin="4,10,10,4" DockPanel.Dock="Left" Orientation="Vertical" MinWidth="260" Width="260" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Grid x:Name="gridSheetScreen" Focusable="True">
+                            <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="sheetScreen" Width="256" VerticalAlignment="Top" Height="512" HorizontalAlignment="Left" MouseDown="SheetScreen_MouseDown"/>
+                            <Image RenderOptions.BitmapScalingMode="NearestNeighbor"  Opacity="0.80" x:Name="sheetScreenOverlay" Width="256" VerticalAlignment="Top" Height="512" HorizontalAlignment="Left" MouseDown="SheetScreen_MouseDown"/>
+                        </Grid>
+                        <StackPanel Margin="0,10,10,4" DockPanel.Dock="Right" Orientation="Horizontal" Height="24" Width="260" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <TextBox IsEnabled="False" Text="00" VerticalAlignment="Top" MaxLength="2" Margin="6 0 6 0" MinWidth="20" TextChanged="SheetTextBox_TextChanged" Tag="0" MouseWheel="SheetTextBox_MouseWheel"/>
+                            <TextBox IsEnabled="False" Text="0A" VerticalAlignment="Top" MaxLength="2" Margin="6 0 6 0" MinWidth="20" TextChanged="SheetTextBox_TextChanged" Tag="1" MouseWheel="SheetTextBox_MouseWheel"/>
+                            <TextBox IsEnabled="False" Text="06" VerticalAlignment="Top" MaxLength="2" Margin="6 0 6 0" MinWidth="20" TextChanged="SheetTextBox_TextChanged" Tag="2" MouseWheel="SheetTextBox_MouseWheel"/>
+                            <TextBox IsEnabled="False" Text="07" VerticalAlignment="Top" MaxLength="2" Margin="6 0 6 0" MinWidth="20" TextChanged="SheetTextBox_TextChanged" Tag="3" MouseWheel="SheetTextBox_MouseWheel"/>
+                            <TextBox x:Name="blockset1" Text="00" VerticalAlignment="Top" MaxLength="2" Margin="6 0 6 0" MinWidth="20" TextChanged="SheetTextBox_TextChanged" Tag="4" MouseWheel="SheetTextBox_MouseWheel"/>
+                            <TextBox x:Name="blockset2" Text="00" VerticalAlignment="Top" MaxLength="2" Margin="6 0 6 0" MinWidth="20" TextChanged="SheetTextBox_TextChanged" Tag="5" MouseWheel="SheetTextBox_MouseWheel"/>
+                            <TextBox x:Name="blockset3" Text="00" VerticalAlignment="Top" MaxLength="2" Margin="6 0 6 0" MinWidth="20" TextChanged="SheetTextBox_TextChanged" Tag="6" MouseWheel="SheetTextBox_MouseWheel"/>
+                            <TextBox x:Name="blockset4" Text="00" VerticalAlignment="Top" MaxLength="2" Margin="6 0 6 0" MinWidth="20" TextChanged="SheetTextBox_TextChanged" Tag="7" MouseWheel="SheetTextBox_MouseWheel"/>
+                        </StackPanel>
+                        <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="PaletteScreen" Width="256" MinWidth="128" MinHeight="128" Height="128" HorizontalAlignment="Left" VerticalAlignment="Top" MouseDown="PaletteScreen_MouseDown"/>
+                    </StackPanel>
+                    <Label Content="Selected Layer Changes History" DockPanel.Dock="Top"/>
+                    <StackPanel DockPanel.Dock="Right">
+                        <ListBox x:Name="actionListbox"/>
+                    </StackPanel>
+                </DockPanel>
+            </TabItem>
+
+
+            <TabItem Header="Properties">
+                <StackPanel Margin="10,10,6,4" DockPanel.Dock="Right" Orientation="Vertical" Height="696" VerticalAlignment="Top">
+                    <StackPanel Margin="0 0 0 0" Orientation="Horizontal" Height="24" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top">
+                        <Label Content="Sprite Name : " Height="32" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 4 0"/>
+
+                        <TextBox x:Name="property_sprname" Text="Template" MinWidth="128" VerticalAlignment="Bottom" Margin="4 0 4 0" TextChanged="property_sprname_TextChanged"/>
+                    </StackPanel>
+                    <GroupBox Width="448" Height="489" Header="Sprite Properties - Hex Values" HorizontalAlignment="Left">
+
+                        <DockPanel Margin="0,0,0,0"  Height="316" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Height="24" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top">
+                                <Label Content="Sprite ID : " Height="32" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 4 0"/>
+
+                                <TextBox x:Name="property_sprid" Text="00" MinWidth="24" VerticalAlignment="Bottom" MaxLength="2" Margin="4 0 4 0" MouseWheel="property_sprid_MouseWheel" TextChanged="property_sprid_TextChanged"/>
+                                <!-- Sprite Name -->
+                                <Label x:Name="sprnameText" Content="Raven" Height="32" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 4 0"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,0,0" Orientation="Vertical" Height="289" Width="200" HorizontalAlignment="Left">
+                                <CheckBox x:Name="property_harmless" Content="Harmless" Margin="4 0 4 0" ToolTip="Sprite can't do any damage to the player if box is checked"/>
+                                <CheckBox x:Name="property_fast" Content="Fast Sprite" Margin="4 0 4 0" ToolTip="Check that box is the sprite is going very fast"/>
+                                <CheckBox x:Name="property_shadow" Content="Draw Shadow" Margin="4 0 4 0" ToolTip="Sprite will draw a shadow if this box is checked"/>
+                                <CheckBox x:Name="property_smallshadow" Content="Small Shadow" Margin="4 0 4 0" ToolTip="Shadow drawn is 8x8 instead of 16x16"/>
+                                <CheckBox x:Name="property_persist" Content="Persist" Margin="4 0 4 0" ToolTip="Sprite doesn't die when it is offscreen"/>
+                                <CheckBox x:Name="property_statis" Content="Statis" Margin="4 0 4 0" ToolTip="Sprite is considered dead if this box is checked (it won't count towards room where you need to kill all enemies to open/spawn chest)"/>
+                                <CheckBox x:Name="property_collisionlayer" Content="Collision Layer" Margin="4 0 4 0" ToolTip="Check collision on both layer"/>
+                                <CheckBox x:Name="property_canfall" Content="Can Fall" Margin="4 0 4 0" ToolTip="Sprite can fall in holes if this box is checked"/>
+                                <CheckBox x:Name="property_deflectarrows" Content="Deflect Arrows" Margin="4 0 4 0" ToolTip="Sprite will deflect arrow if this box is checked"/>
+                                <CheckBox x:Name="property_watersprite" Content="Water Sprite" Margin="4 0 4 0" ToolTip="Sprite can only walk on water tiles, rest will be collision"/>
+                                <StackPanel Orientation="Horizontal" Height="28">
+                                    <Label Content="Tiles Number " Height="24" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 4 0"/>
+                                    <TextBox x:Name="property_oamnbr" Text="00" VerticalAlignment="Center" MinWidth="20" HorizontalAlignment="Right" MaxLength="2" Margin="4 0 4 0" ToolTip="This is the number of tile used per frame if your sprite is 4 16x16 tiles that must be setted to 4"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Height="28">
+                                    <Label Content="Sprite Health " Height="24" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 4 0"/>
+                                    <TextBox x:Name="property_health" Text="00" VerticalAlignment="Center" MinWidth="20" HorizontalAlignment="Right" MaxLength="2" Margin="5,0,4,0" ToolTip="Health of the sprite how many hit it will take to die can go up to FF"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Height="28">
+                                    <Label Content="Sprite Damage " Height="24" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 0 0"/>
+                                    <TextBox  x:Name="property_damage" Text="00" VerticalAlignment="Center" MinWidth="20" HorizontalAlignment="Right" MaxLength="2" Margin="0,0,4,0" ToolTip="Damage group the sprite is using it can go up to 0x10"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,0,0" Orientation="Vertical" Height="289" Width="200" HorizontalAlignment="Left" VerticalAlignment="Bottom" DockPanel.Dock="Right">
+                                <CheckBox x:Name="property_impervious" Content="Impervious" Margin="4 0 4 0" ToolTip="All attack will clink on the sprite causing no damage if box is checked"/>
+                                <CheckBox x:Name="property_customdeath" Content="Custom Death" Margin="4 0 4 0" ToolTip="Check that box if your sprite have a custom death animation"/>
+                                <CheckBox x:Name="property_damagesound" Content="Damage Sound" Margin="4 0 4 0" ToolTip="Sprite will play a different sound effect when taking damage"/>
+                                <CheckBox x:Name="property_interaction" Content="Interaction?" Margin="4 0 4 0" ToolTip="No information on this box the use is unknown"/>
+                                <CheckBox x:Name="property_deflectprojectiles" Content="Deflect Projectiles" Margin="4 0 4 0" ToolTip="Sprite will deflect projectiles you throw at him if this is checked"/>
+                                <CheckBox x:Name="property_imperviousarrow" Content="Impervious Arrows" Margin="4 0 4 0" ToolTip="Sprite will not take damage from arrows (not sure how different from deflect arrow this is)"/>
+                                <CheckBox x:Name="property_imperviousmelee" Content="Impervious Melee" Margin="4 0 4 0" ToolTip="Sword and Hammer won't do damage on sprite and push you back instead"/>
+                                <CheckBox x:Name="property_blockable" Content="Blockable" Margin="4 0 4 0" ToolTip="Sprite is a projectile that can be blocked by shields"/>
+                                <CheckBox x:Name="property_statue" Content="Statue" Margin="4 0 4 0" ToolTip="Sprite will act like a statue if this box is checked (not sure)"/>
+                                <CheckBox x:Name="property_isboss" Content="Is Boss" Margin="4 0 4 0" ToolTip="Sprite is a boss if this box is checked"/>
+                                <StackPanel Orientation="Horizontal" Height="28">
+                                    <Label Content="Sprite Palette " Height="24" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 4 0"/>
+                                    <TextBox  x:Name="property_palette" Text="00" VerticalAlignment="Center" MinWidth="20" HorizontalAlignment="Right" MaxLength="2" Margin="4 0 4 0" ToolTip="Palette of the sprite from 0 to 7"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Height="28">
+                                    <Label Content="Sprite Hitbox " Height="24" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 4 0"/>
+                                    <TextBox x:Name="property_hitbox" Text="00" VerticalAlignment="Center" MinWidth="20" HorizontalAlignment="Right" MaxLength="2" Margin="5,0,4,0" ToolTip="Hitbox of the sprite 0 to 1F can be displayed with the checkbox show hitbox" TextChanged="property_hitbox_TextChanged" MouseWheel="property_hitbox_MouseWheel"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Height="28">
+                                    <Label Content="Sprite Prize " Height="24" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="4 0 7 0"/>
+                                    <TextBox x:Name="property_prize" Text="00" VerticalAlignment="Center" MinWidth="20" HorizontalAlignment="Right" MaxLength="2" Margin="12,0,4,0" ToolTip="Prize group dropped by the sprite 00 to 0F"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </DockPanel>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Code">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="204" />
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel LastChildFill="False" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch">
+                        <Label Content="Core sprite routines" DockPanel.Dock="Top"/>
+                        <ListBox x:Name="coreroutinesListbox" MinHeight="64" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="4 0 8 0" SelectionChanged="coreroutinesListbox_SelectionChanged"/>
+                        <Label Content="Action sprite routines" DockPanel.Dock="Top"/>
+                        <ListBox x:Name="userroutinesListbox" MinHeight="500" DockPanel.Dock="Top" VerticalAlignment="Stretch" Margin="4 0 8 0" SelectionChanged="userroutinesListbox_SelectionChanged"></ListBox>
+
+
+                        <Button Content="Delete Action" Height="24" DockPanel.Dock="Bottom" Margin="4 2 8 2" Click="deleteActionButton_Click"/>
+                        <Button Content="Rename Action" Height="24" DockPanel.Dock="Bottom" Margin="4 2 8 2" Click="renameActionButton_Click"/>
+                        <Button Content="Add Action" Height="24" DockPanel.Dock="Bottom" Margin="4 2 8 2" Click="addActionButton_Click"/>
+
+
+
+
+                    </DockPanel>
+                    <GridSplitter Width="4" Grid.Row="0" Grid.Column="0" />
+
+
+                    <avalonEdit:TextEditor  Grid.Row="0" Grid.Column="1" DockPanel.Dock="Left" x:Name="codeEditor" FontSize="14" SyntaxHighlighting="ASM" Background="#282828" Foreground="#EEEEEE" HorizontalAlignment="Stretch"/>
+
+                    <GridSplitter Width="4" Grid.Row="0" Grid.Column="1" />
+
+                    <TabControl Grid.Row="0" Grid.Column="2" x:Name="infoTabControl" DockPanel.Dock="Right">
+                        <TabItem Header="Functions (JSL)">
+                            <DockPanel>
+                                <TextBox x:Name="searchfunctionBox" DockPanel.Dock="Top" TextChanged="searchfunctionBox_TextChanged"></TextBox>
+                                <ScrollViewer HorizontalScrollBarVisibility="Visible">
+
+                                    <StackPanel>
+                                        <ListBox x:Name="functionsListbox" SelectionChanged="functionsListbox_SelectionChanged">
+                                            <ListBoxItem Content="Sprite_SetSpawnedCoords" ToolTip="Set the position of the spawned sprite to current sprite"/>
+                                            <ListBoxItem Content="Sprite_PrepOamCoord" ToolTip="set the oam coordinate for the sprite draw"/>
+                                            <ListBoxItem Content="Sprite_CheckDamageFromPlayer" ToolTip="check if the sprite is getting damage from player or items (required to damage the sprite)"/>
+                                            <ListBoxItem Content="Sprite_CheckDamageToPlayer" ToolTip="check if the sprite is touching the player to damage (required to damage the player)"/>
+                                            <ListBoxItem Content="Sprite_AttemptDamageToPlayerPlusRecoil" ToolTip="damage the player everywhere on screen with recoil must be used conditionally"/>
+                                            <ListBoxItem Content="Sprite_OAM_AllocateDeferToPlayer" ToolTip="Draw the sprite depending of the position of the player (if he has to be over or under link)"/>
+                                            <ListBoxItem Content="OAM_AllocateFromRegionA" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
+                                            <ListBoxItem Content="OAM_AllocateFromRegionB" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
+                                            <ListBoxItem Content="OAM_AllocateFromRegionC" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
+                                            <ListBoxItem Content="OAM_AllocateFromRegionD" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
+                                            <ListBoxItem Content="OAM_AllocateFromRegionE" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
+                                            <ListBoxItem Content="OAM_AllocateFromRegionF" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
+                                            <ListBoxItem Content="Sprite_DrawMultiple_quantity_preset" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
+                                            <ListBoxItem Content="ApplyRumbleToSprites" ToolTip="makes all the sprites on screen shaking"/>
+                                            <ListBoxItem Content="CheckIfHitBoxesOverlap" ToolTip=";args ;!pos1_low  = $00&#x0a;&#x0a;!pos1_size = $02&#x0a;!pos2_low  = $04&#x0a;!pos2_size = $06&#x0a;!pos1_high = $08&#x0a;!pos2_high = $0A&#x0a;!ans_low   = $0F&#x0a;!ans_high  = $0C&#x0a;returns carry clear if there was no overlap"/>
+                                            <ListBoxItem Content="Sprite_Get_16_bit_Coords" ToolTip="$0FD8 = sprite's X coordinate, $0FDA = sprite's Y coordinate"/>
+                                            <ListBoxItem Content="Sprite_PrepAndDrawSingleLarge" ToolTip="load / draw a  16x16 sprite"/>
+                                            <ListBoxItem Content="Sprite_PrepAndDrawSingleSmall" ToolTip="load / draw a  8x8 sprite"/>
+                                            <ListBoxItem Content="Sprite_DrawShadow" ToolTip=""/>
+                                            <ListBoxItem Content="Sprite_CheckTileCollision" ToolTip="check if the sprite is colliding with a solid tile set $0E70, X&#x0a;----udlr , u = up, d = down, l = left, r = right"/>
+                                            <ListBoxItem Content="Sprite_GetTileAttr" ToolTip="$00[0x02] - Entity Y coordinate&#x0a;$02[0x02] - Entity X coordinate"/>
+                                            <ListBoxItem Content="Sprite_CheckSlopedTileCollision" ToolTip="check if the sprite is colliding with a solid sloped tile"/>
+                                            <ListBoxItem Content="Sprite_ApplySpeedTowardsPlayer" ToolTip="set the velocity x,y towards the player (A = speed)"/>
+                                            <ListBoxItem Content="Sprite_DirectionToFacePlayer" ToolTip="; $0E is low byte of player_y_pos - sprite_y_pos&#x0a;$0F is low byte of player_x_pos - sprite_x_pos"/>
+                                            <ListBoxItem Content="Sprite_IsToRightOfPlayer" ToolTip="if Link is to the left of the sprite, Y = 1, otherwise Y = 0."/>
+                                            <ListBoxItem Content="Sprite_IsBelowPlayer" ToolTip="return Y=1 sprite is below player, otherwise Y = 0"/>
+                                            <ListBoxItem Content="Sprite_CheckDamageToPlayerSameLayer" ToolTip="check damage done to player if they collide and if they are on same layer"/>
+                                            <ListBoxItem Content="Sprite_CheckDamageToPlayerIgnoreLayer" ToolTip="check damage done to player if they collide even if they are not on same layer"/>
+                                            <ListBoxItem Content="Sound_SetSfx1PanLong" ToolTip="play a sound loaded in A"/>
+                                            <ListBoxItem Content="Sound_SetSfx2PanLong" ToolTip="play a sound loaded in A"/>
+                                            <ListBoxItem Content="Sound_SetSfx3PanLong" ToolTip="play a sound loaded in A"/>
+                                            <ListBoxItem Content="Sprite_SpawnDynamically" ToolTip=";spawn a new sprite on screen, A = sprite id&#x0a;when using this function you have to set the position yourself&#x0a;these values belong to the sprite who used that function not the new one &#x0a;$00 low x, $01 high x&#x0a;$02 low y, $03 high y&#x0a;$04 height, $05 low x (overlord)&#x0a;$06 high x (overlord), $07 low y (overlord)&#x0a;$08 high y (overlord)"/>
+                                            <ListBoxItem Content="Player_ResetState" ToolTip="Used to reset the player state like swimming, grabbing, reading ,etc..."/>
+                                            <ListBoxItem Content="Sprite_ApplyConveyorAdjustment" ToolTip="The sprite will be affected by conveyor"/>
+                                            <ListBoxItem Content="Sprite_SetupHitBoxLong" ToolTip="Set the hitbox of the player"/>
+                                            <ListBoxItem Content="Dungeon_SpriteInducedTilemapUpdate" ToolTip=""/>
+                                            <ListBoxItem Content="GetRandomInt" ToolTip="Will return a random value in A"/>
+                                            <ListBoxItem Content="Sprite_PlayerCantPassThrough" ToolTip="Player cannot go throught the hitbox"/>
+                                            <ListBoxItem Content="Sprite_NullifyHookshotDrag" ToolTip="If player is colliding with the sprite while using the hookshot it will cancel hookshot"/>
+                                            <ListBoxItem Content="Player_HaltDashAttack" ToolTip="Will prevent player from dashing"/>
+                                            <ListBoxItem Content="Sprite_ShowMessageUnconditional" ToolTip=";show a message box without any condition&#x0a;A = low byte of message ID to use.&#x0a;Y = high byte of message ID to use."/>
+                                            <ListBoxItem Content="Link_ReceiveItem" ToolTip="Y = item id&#x0a;Link will receive the item in Y over his head"/>
+                                            <ListBoxItem Content="Sprite_ShowSolicitedMessageIfPlayerFacing" ToolTip="show a message if we press A and face the sprite&#x0a;A = low byte of message ID to use.&#x0a;Y = high byte of message ID to use."/>
+                                            <ListBoxItem Content="Sprite_ShowMessageFromPlayerContact" ToolTip="show a message if we touch the sprite should be used with Sprite_PlayerCantPassThrough&#x0a;A = low byte of message ID to use.&#x0a;Y = high byte of message ID to use."/>
+                                            <ListBoxItem Content="Sprite_ProjectSpeedTowardsEntityLong" ToolTip=";04 = X&#x0a;05 = HighX&#x0a;06 = Y&#x0a;07 = HighY&#x0a;A = Speed&#x0a;Return $00 - Y Velocity&#x0a;Return $01 - X Velocity"/>
+                                            <ListBoxItem Content="Sprite_SpawnFireball" ToolTip="Spawn a fireball aimed at the player"/>
+                                            <ListBoxItem Content="Sprite_MoveLong" ToolTip="Required to make the sprite move using velocity"/>
+                                            <ListBoxItem Content="Sprite_DrawRippleIfInWater" ToolTip="Draw ripples in water"/>
+                                            <ListBoxItem Content="Sprite_SpawnSparkleGarnish" ToolTip="Draw some sparkles"/>
+                                            <ListBoxItem Content="Sprite_ProjectSpeedTowardsPlayer" ToolTip="Same as ProjectSpeedTowardsEntityLong but towards the player"/>
+                                        </ListBox>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </DockPanel>
+                        </TabItem>
+
+                        <TabItem Header="Macros (%)">
+                            <DockPanel>
+                                <TextBox x:Name="searchmacrosBox" DockPanel.Dock="Top" TextChanged="searchmacrosBox_TextChanged"></TextBox>
+                                <ScrollViewer HorizontalScrollBarVisibility="Visible">
+
+                                    <StackPanel>
+                                        <ListBox x:Name="macrosListbox" SelectionChanged="macrosListbox_SelectionChanged">
+
+                                        </ListBox>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </DockPanel>
+
+                        </TabItem>
+                        <TabItem Header="RAM">
+                            <DockPanel>
+                                <TextBox x:Name="searchramBox" DockPanel.Dock="Top" TextChanged="searchramBox_TextChanged"></TextBox>
+                                <ScrollViewer HorizontalScrollBarVisibility="Visible">
+
+                                    <StackPanel>
+                                        <ListBox x:Name="ramListbox" SelectionChanged="ramListbox_SelectionChanged">
+                                            <ListBoxItem Tag="X" Content="SprAction" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprFrame" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprMiscA" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprMiscB" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprMiscC" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprMiscD" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprMiscE" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprMiscF" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprMiscG" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprStunTimer" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprTimerA" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprTimerB" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprTimerC" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprTimerD" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprTimerE" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprTimerF" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprPause" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprFloor" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprType" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprSubtype" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprState" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprNbrOAM" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprHealth" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprGfxProps" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprCollision" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprDelay" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprRecoil" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprDeath" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprProps" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprHitbox" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprHeight" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprHeightS" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprYRecoil" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprXRecoil" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprGfx" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprY" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprX" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprYH" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprXH" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprYSpeed" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprXSpeed" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprYRound" ToolTip=""/>
+                                            <ListBoxItem Tag="X" Content="SprXRound" ToolTip=""/>
+                                            <ListBoxItem Tag="" Content="SprCachedX" ToolTip=""/>
+                                            <ListBoxItem Tag="" Content="SprCachedY" ToolTip=""/>
+                                            <ListBoxItem Tag="" Content="OAMPtr" ToolTip=""/>
+                                            <ListBoxItem Tag="" Content="OAMPtrH" ToolTip=""/>
+                                        </ListBox>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </DockPanel>
+                        </TabItem>
+
+                    </TabControl>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+    </DockPanel>
+
+
+</Window>
