@@ -361,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+*.zip
+*.sfc
+/ZSpriteMaker/SpriteMakerEngine/BatGeneratedSprites.asm
+/ZSpriteMaker/SpriteMakerEngine/Macros.asm
+/ZSpriteMaker/SpriteMakerEngine/SpriteEngine.asm
+/ZSpriteMaker/SpriteMakerEngine/sprite_functions_hooks.asm
+/ZSpriteMaker/SpriteMakerEngine/sprite_new_functions.asm
+/ZSpriteMaker/SpriteMakerEngine/sprite_new_table.asm
