@@ -1,0 +1,24 @@
+﻿<Window x:Class="ZSpriteMaker.ShiftWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZSpriteMaker"
+        mc:Ignorable="d"
+        Title="ShiftWindow" Height="72" Width="220" SizeToContent="WidthAndHeight"
+        Style="{DynamicResource CustomWindowStyle}">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label> X  : </Label>
+                <TextBox Width="80" x:Name="xTextbox"></TextBox>
+                <Label> Y  :</Label>
+                <TextBox Width="80" x:Name="yTextbox" ></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Width="48" Click="ButtonCancel_Click">Cancel</Button>
+                <Button Width="48" Click="ButtonOk_Click">Ok</Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -9,6 +9,14 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Images\BGimg.png" />
     <None Remove="Images\centerimg.png" />

@@ -23,6 +23,7 @@ using ICSharpCode;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace ZSpriteMaker
 {
@@ -47,9 +48,11 @@ namespace ZSpriteMaker
             codeEditor.FontFamily = new FontFamily(Properties.Settings.Default.FontFamily);
             codeEditor.FontSize = Properties.Settings.Default.FontSize;
             codeEditor.ShowLineNumbers = true;
-            foreach(ListBoxItem li in functionsListbox.Items)
+
+            CreateJSL();
+            foreach (ListBoxItem li in functionListItems)
             {
-                functionListItems.Add(li);
+                functionsListbox.Items.Add(li);
             }
 
             CreateMacros();
@@ -171,6 +174,8 @@ namespace ZSpriteMaker
         bool logicEdtiorSelected = false;
         string sprName = "Template";
 
+        string savedFile = "";
+
 
         readonly PointeredImage MainScreenBack_Image = new(256, 224, 2, 240);
         readonly PointeredImage MainScreen_Image = new(256, 224, 2, 0);
@@ -221,7 +226,7 @@ namespace ZSpriteMaker
             {
                 CreateProject(true);
                 userRoutines.Clear();
-
+                savedFile = ofd.FileName;
                 FileStream fs = new(ofd.FileName, FileMode.Open, FileAccess.Read);
 
                 BinaryReader br = new BinaryReader(fs);
@@ -322,6 +327,110 @@ namespace ZSpriteMaker
         }
         private void Save_Command(object sender, ExecutedRoutedEventArgs e)
         {
+            if (savedFile != "")
+            {
+                Save(savedFile);
+                return;
+            }
+            SaveFileDialog sfd = new()
+            {
+                Filter = "ZSprite Maker Project File (*.zsm)|*.zsm",
+                DefaultExt = ".zsm"
+            };
+
+            if (sfd.ShowDialog() == true)
+            {
+                Save(sfd.FileName);
+            }
+        }
+
+        private void Save(string filename)
+        {
+            if (previousCode != -1)
+            {
+                userRoutines[previousCode].code = codeEditor.Text;
+                //save that code
+            }
+
+
+            FileStream fs = new(filename, FileMode.OpenOrCreate, FileAccess.Write);
+
+            BinaryWriter bw = new BinaryWriter(fs);
+
+            bw.Write(animations.Count); // int 
+            foreach (AnimationGroup anim in animations)
+            {
+                bw.Write(anim.FrameName); // string
+                bw.Write(anim.FrameStart); // byte
+                bw.Write(anim.FrameEnd);  // byte
+                bw.Write(anim.FrameSpeed);  // byte
+            }
+
+            bw.Write(editor.Frames.Length); // int 
+            for (int i = 0; i < editor.Frames.Length; i++)
+            {
+                bw.Write(editor.Frames[i].Tiles.Count); // int //number of tiles
+
+                for (int j = 0; j < editor.Frames[i].Tiles.Count; j++)
+                {
+                    bw.Write(editor.Frames[i].Tiles[j].id); //ushort
+                    bw.Write(editor.Frames[i].Tiles[j].palette); //byte
+                    bw.Write(editor.Frames[i].Tiles[j].mirrorX); //bool
+                    bw.Write(editor.Frames[i].Tiles[j].mirrorY); //bool
+                    bw.Write(editor.Frames[i].Tiles[j].priority); //byte
+                    bw.Write(editor.Frames[i].Tiles[j].size); //bool
+                    bw.Write(editor.Frames[i].Tiles[j].x); //byte
+                    bw.Write(editor.Frames[i].Tiles[j].y); //byte
+                    bw.Write(editor.Frames[i].Tiles[j].z); //byte
+                }
+            }
+
+            //all sprites properties
+            bw.Write((bool)property_blockable.IsChecked);
+            bw.Write((bool)property_canfall.IsChecked);
+            bw.Write((bool)property_collisionlayer.IsChecked);
+            bw.Write((bool)property_customdeath.IsChecked);
+            bw.Write((bool)property_damagesound.IsChecked);
+            bw.Write((bool)property_deflectarrows.IsChecked);
+            bw.Write((bool)property_deflectprojectiles.IsChecked);
+            bw.Write((bool)property_fast.IsChecked);
+            bw.Write((bool)property_harmless.IsChecked);
+            bw.Write((bool)property_impervious.IsChecked);
+            bw.Write((bool)property_imperviousarrow.IsChecked);
+            bw.Write((bool)property_imperviousmelee.IsChecked);
+            bw.Write((bool)property_interaction.IsChecked);
+            bw.Write((bool)property_isboss.IsChecked);
+            bw.Write((bool)property_persist.IsChecked);
+            bw.Write((bool)property_shadow.IsChecked);
+            bw.Write((bool)property_smallshadow.IsChecked);
+            bw.Write((bool)property_statis.IsChecked);
+            bw.Write((bool)property_statue.IsChecked);
+            bw.Write((bool)property_watersprite.IsChecked);
+
+
+            bw.Write(byte.Parse(property_prize.Text, NumberStyles.HexNumber));
+            bw.Write(byte.Parse(property_palette.Text, NumberStyles.HexNumber));
+            bw.Write(byte.Parse(property_oamnbr.Text, NumberStyles.HexNumber));
+            bw.Write(byte.Parse(property_hitbox.Text, NumberStyles.HexNumber));
+            bw.Write(byte.Parse(property_health.Text, NumberStyles.HexNumber));
+            bw.Write(byte.Parse(property_damage.Text, NumberStyles.HexNumber));
+
+            bw.Write(sprName); // string
+
+            bw.Write(userRoutines.Count); // int 
+            foreach (UserRoutine userR in userRoutines)
+            {
+                bw.Write(userR.name); // string
+                bw.Write(userR.code); // string
+            }
+
+            bw.Write(property_sprid.Text);
+            bw.Close();
+        }
+
+
+        private void SaveAs_Command(object sender, ExecutedRoutedEventArgs e)
+        {
 
             SaveFileDialog sfd = new()
             {
@@ -331,97 +440,12 @@ namespace ZSpriteMaker
 
             if (sfd.ShowDialog() == true)
             {
-                if (previousCode != -1)
-                {
-                    userRoutines[previousCode].code = codeEditor.Text;
-                    //save that code
-                }
-
-
-                FileStream fs = new(sfd.FileName, FileMode.OpenOrCreate, FileAccess.Write);
-
-                BinaryWriter bw = new BinaryWriter(fs);
-
-                bw.Write(animations.Count); // int 
-                foreach(AnimationGroup anim in animations)
-                {
-                    bw.Write(anim.FrameName); // string
-                    bw.Write(anim.FrameStart); // byte
-                    bw.Write(anim.FrameEnd);  // byte
-                    bw.Write(anim.FrameSpeed);  // byte
-                }
-
-                bw.Write(editor.Frames.Length); // int 
-                for (int i = 0; i < editor.Frames.Length; i++)
-                {
-                    bw.Write(editor.Frames[i].Tiles.Count); // int //number of tiles
-
-                    for (int j = 0; j < editor.Frames[i].Tiles.Count; j++)
-                    {
-                        bw.Write(editor.Frames[i].Tiles[j].id); //ushort
-                        bw.Write(editor.Frames[i].Tiles[j].palette); //byte
-                        bw.Write(editor.Frames[i].Tiles[j].mirrorX); //bool
-                        bw.Write(editor.Frames[i].Tiles[j].mirrorY); //bool
-                        bw.Write(editor.Frames[i].Tiles[j].priority); //byte
-                        bw.Write(editor.Frames[i].Tiles[j].size); //bool
-                        bw.Write(editor.Frames[i].Tiles[j].x); //byte
-                        bw.Write(editor.Frames[i].Tiles[j].y); //byte
-                        bw.Write(editor.Frames[i].Tiles[j].z); //byte
-                    }
-                }
-
-                //all sprites properties
-                bw.Write((bool)property_blockable.IsChecked);
-                bw.Write((bool)property_canfall.IsChecked);
-                bw.Write((bool)property_collisionlayer.IsChecked);
-                bw.Write((bool)property_customdeath.IsChecked);
-                bw.Write((bool)property_damagesound.IsChecked);
-                bw.Write((bool)property_deflectarrows.IsChecked);
-                bw.Write((bool)property_deflectprojectiles.IsChecked);
-                bw.Write((bool)property_fast.IsChecked);
-                bw.Write((bool)property_harmless.IsChecked);
-                bw.Write((bool)property_impervious.IsChecked);
-                bw.Write((bool)property_imperviousarrow.IsChecked);
-                bw.Write((bool)property_imperviousmelee.IsChecked);
-                bw.Write((bool)property_interaction.IsChecked);
-                bw.Write((bool)property_isboss.IsChecked);
-                bw.Write((bool)property_persist.IsChecked);
-                bw.Write((bool)property_shadow.IsChecked);
-                bw.Write((bool)property_smallshadow.IsChecked);
-                bw.Write((bool)property_statis.IsChecked);
-                bw.Write((bool)property_statue.IsChecked);
-                bw.Write((bool)property_watersprite.IsChecked);
-
-                
-                bw.Write(byte.Parse(property_prize.Text));
-                bw.Write(byte.Parse(property_palette.Text));
-                bw.Write(byte.Parse(property_oamnbr.Text));
-                bw.Write(byte.Parse(property_hitbox.Text));
-                bw.Write(byte.Parse(property_health.Text));
-                bw.Write(byte.Parse(property_damage.Text));
-
-                /*                
-                coreroutinesListbox.Items.Add("Long Main Routine");
-                coreroutinesListbox.Items.Add("Sprite_Prep");
-                coreroutinesListbox.Items.Add("Draw Routine");*/
-
-                bw.Write(sprName); // string
-
-                bw.Write(userRoutines.Count); // int 
-                foreach (UserRoutine userR in userRoutines)
-                {
-                    bw.Write(userR.name); // string
-                    bw.Write(userR.code); // string
-                }
-
-                bw.Write(property_sprid.Text);
-                bw.Close();
+                Save(sfd.FileName);
             }
-
-            
-
-
         }
+
+
+
         private void Undo_Command(object sender, ExecutedRoutedEventArgs e)
         {
 
@@ -517,7 +541,21 @@ namespace ZSpriteMaker
                 RefreshScreen();
         }
 
+        private void Shift_Command(object sender, ExecutedRoutedEventArgs e)
+        {
+            ShiftWindow window = new ShiftWindow();
+            window.ShowDialog();
 
+            foreach (Frame frame in editor.Frames)
+            {
+                foreach (OamTile tile in frame.Tiles)
+                {
+                    tile.x += (byte)window.xShift;
+                    tile.y += (byte)window.yShift;
+                }
+            }
+            RefreshScreen();
+        }
 
 
         private void CompositionTarget_Rendering(object sender, EventArgs e)
@@ -555,97 +593,108 @@ namespace ZSpriteMaker
             }
         }
 
+
         private void CM_DeleteSelected_Click(object sender, RoutedEventArgs e)
         {
             Delete_Command(null, null);
+        }
+        private void CM_ShiftSelected_Click(object sender, RoutedEventArgs e)
+        {
+            Shift_Command(null, null);
         }
         byte CMX = 0;
         byte CMY = 0;
         private void MainScreen_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            logicEdtiorSelected = false;
-            gridMainScreen.Focus();
-
-            CMX = Editor.SnapByte((byte)(e.GetPosition((IInputElement)e.Source).X / cDPI));
-            CMY = Editor.SnapByte((byte)(e.GetPosition((IInputElement)e.Source).Y / cDPI));
-
-            editor.MouseDown(e, cDPI, MainScreen_Image, MainScreenLayer_Image, SheetScreen_Image);
-
-
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            if (projectLoaded)
             {
-                editor.Frames[editor.SelectedFrame].Tiles.Add(new OamTile(CMX, CMY, false, false, editor.SelectedTile, editor.SelectedPalette, true));
-                RefreshScreen();
-                return;
-            }
-            //Handle for the context menu here
-            if (e.RightButton == MouseButtonState.Pressed)
-            {
+                
+                logicEdtiorSelected = false;
+                gridMainScreen.Focus();
+                MainScreen.Focus();
+                CMX = Editor.SnapByte((byte)(e.GetPosition((IInputElement)e.Source).X / cDPI));
+                CMY = Editor.SnapByte((byte)(e.GetPosition((IInputElement)e.Source).Y / cDPI));
 
-                ContextMenu contextMenu = new();
-                if (editor.selectedTiles.Count == 0)
+                editor.MouseDown(e, cDPI, MainScreen_Image, MainScreenLayer_Image, SheetScreen_Image);
+
+
+                if (Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
-                    SetMenuItems(contextMenu, GetContextMenu(MenuType.NoneSelected));
+                    editor.Frames[editor.SelectedFrame].Tiles.Add(new OamTile(CMX, CMY, false, false, editor.SelectedTile, editor.SelectedPalette, true));
+                    RefreshScreen();
+                    return;
                 }
-                else if (editor.selectedTiles.Count == 1)
+                //Handle for the context menu here
+                if (e.RightButton == MouseButtonState.Pressed)
                 {
-                    SetMenuItems(contextMenu, GetContextMenu(MenuType.OneObjectSelected));
+
+                    ContextMenu contextMenu = new();
+                    if (editor.selectedTiles.Count == 0)
+                    {
+                        SetMenuItems(contextMenu, GetContextMenu(MenuType.NoneSelected));
+                    }
+                    else if (editor.selectedTiles.Count == 1)
+                    {
+                        SetMenuItems(contextMenu, GetContextMenu(MenuType.OneObjectSelected));
+                    }
+                    else if (editor.selectedTiles.Count > 1)
+                    {
+                        SetMenuItems(contextMenu, GetContextMenu(MenuType.MultipleObjectSelected));
+                    }
+
+                    contextMenu.IsOpen = true;
                 }
-                else if (editor.selectedTiles.Count > 1)
+
+
+
+                if (editor.selectedTiles.Count == 1)
                 {
-                    SetMenuItems(contextMenu, GetContextMenu(MenuType.MultipleObjectSelected));
+                    groupboxProperty.IsEnabled = true;
+                    mirrorXCheckbox.IsEnabled = true;
+                    mirrorYCheckbox.IsEnabled = true;
+                    sizeCheckbox.IsEnabled = true;
+                    paletteTextbox.IsEnabled = true;
+                    oamXTextbox.IsEnabled = true;
+                    oamYTextbox.IsEnabled = true;
+                    oamZTextbox.IsEnabled = true;
+                    UpdateSelectedTileInfos();
+                }
+                else if (editor.selectedTiles.Count == 0)
+                {
+                    groupboxProperty.IsEnabled = false;
+                }
+                else
+                {
+                    groupboxProperty.IsEnabled = true;
+                    mirrorXCheckbox.IsEnabled = false;
+                    mirrorYCheckbox.IsEnabled = false;
+                    paletteTextbox.IsEnabled = true;
+                    sizeCheckbox.IsEnabled = false;
+                    oamXTextbox.IsEnabled = false;
+                    oamYTextbox.IsEnabled = false;
+                    oamZTextbox.IsEnabled = false;
+                    UpdateSelectedTileInfos();
+
                 }
 
-                contextMenu.IsOpen = true;
-            }
 
-
-
-            if (editor.selectedTiles.Count == 1)
-            {
-                groupboxProperty.IsEnabled = true;
-                mirrorXCheckbox.IsEnabled = true;
-                mirrorYCheckbox.IsEnabled = true;
-                sizeCheckbox.IsEnabled = true;
-                paletteTextbox.IsEnabled = true;
-                oamXTextbox.IsEnabled = true;
-                oamYTextbox.IsEnabled = true;
-                oamZTextbox.IsEnabled = true;
-                UpdateSelectedTileInfos();
-            }
-            else if (editor.selectedTiles.Count == 0)
-            {
-                groupboxProperty.IsEnabled = false;
-            }
-            else
-            {
-                groupboxProperty.IsEnabled = true;
-                mirrorXCheckbox.IsEnabled = false;
-                mirrorYCheckbox.IsEnabled = false;
-                paletteTextbox.IsEnabled = true;
-                sizeCheckbox.IsEnabled = false;
-                oamXTextbox.IsEnabled = false;
-                oamYTextbox.IsEnabled = false;
-                oamZTextbox.IsEnabled = false;
-                UpdateSelectedTileInfos();
 
             }
-
-
-
-
         }
 
 
         private void MainScreen_MouseMove(object sender, MouseEventArgs e)
         {
-            editor.MouseMove(e, cDPI, MainScreen_Image, MainScreenLayer_Image, SheetScreen_Image);
-            if (editor.selectedTiles.Count == 1)
+            if (projectLoaded)
             {
-                if (editor.mouseDown)
+                editor.MouseMove(e, cDPI, MainScreen_Image, MainScreenLayer_Image, SheetScreen_Image);
+                if (editor.selectedTiles.Count == 1)
                 {
-                    groupboxProperty.IsEnabled = true;
-                    UpdateSelectedTileInfos();
+                    if (editor.mouseDown)
+                    {
+                        groupboxProperty.IsEnabled = true;
+                        UpdateSelectedTileInfos();
+                    }
                 }
             }
         }
@@ -666,44 +715,46 @@ namespace ZSpriteMaker
 
             private void MainScreen_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            editor.MouseUp(e, cDPI, MainScreen_Image, MainScreenLayer_Image, SheetScreen_Image);
-
-            /*if (editor.selectedTiles.Count == 1)
+            if (projectLoaded)
             {
-                groupboxProperty.IsEnabled = true;
-                UpdateSelectedTileInfos();
-            }*/
+                editor.MouseUp(e, cDPI, MainScreen_Image, MainScreenLayer_Image, SheetScreen_Image);
 
-            if (editor.selectedTiles.Count == 1)
-            {
-                groupboxProperty.IsEnabled = true;
-                mirrorXCheckbox.IsEnabled = true;
-                mirrorYCheckbox.IsEnabled = true;
-                sizeCheckbox.IsEnabled = true;
-                paletteTextbox.IsEnabled = true;
-                oamXTextbox.IsEnabled = true;
-                oamYTextbox.IsEnabled = true;
-                oamZTextbox.IsEnabled = true;
-                UpdateSelectedTileInfos();
+                /*if (editor.selectedTiles.Count == 1)
+                {
+                    groupboxProperty.IsEnabled = true;
+                    UpdateSelectedTileInfos();
+                }*/
+
+                if (editor.selectedTiles.Count == 1)
+                {
+                    groupboxProperty.IsEnabled = true;
+                    mirrorXCheckbox.IsEnabled = true;
+                    mirrorYCheckbox.IsEnabled = true;
+                    sizeCheckbox.IsEnabled = true;
+                    paletteTextbox.IsEnabled = true;
+                    oamXTextbox.IsEnabled = true;
+                    oamYTextbox.IsEnabled = true;
+                    oamZTextbox.IsEnabled = true;
+                    UpdateSelectedTileInfos();
+                }
+                else if (editor.selectedTiles.Count == 0)
+                {
+                    groupboxProperty.IsEnabled = false;
+                }
+                else
+                {
+                    groupboxProperty.IsEnabled = true;
+                    mirrorXCheckbox.IsEnabled = false;
+                    mirrorYCheckbox.IsEnabled = false;
+                    paletteTextbox.IsEnabled = true;
+                    sizeCheckbox.IsEnabled = false;
+                    oamXTextbox.IsEnabled = false;
+                    oamYTextbox.IsEnabled = false;
+                    oamZTextbox.IsEnabled = false;
+                    UpdateSelectedTileInfos();
+
+                }
             }
-            else if (editor.selectedTiles.Count == 0)
-            {
-                groupboxProperty.IsEnabled = false;
-            }
-            else
-            {
-                groupboxProperty.IsEnabled = true;
-                mirrorXCheckbox.IsEnabled = false;
-                mirrorYCheckbox.IsEnabled = false;
-                paletteTextbox.IsEnabled = true;
-                sizeCheckbox.IsEnabled = false;
-                oamXTextbox.IsEnabled = false;
-                oamYTextbox.IsEnabled = false;
-                oamZTextbox.IsEnabled = false;
-                UpdateSelectedTileInfos();
-
-            }
-
         }
 
         private bool FindAnyTilesChanges(OamTile[] history, List<OamTile> current)
@@ -880,15 +931,55 @@ namespace ZSpriteMaker
                 macrosListItems.Add(li);
             }
             //macrosListItems
+        }
+
+        public void CreateJSL()
+        {
+            functionListItems.Clear();
+            string jslfile = File.ReadAllText("SpriteMakerEngine/sprite_functions_hooks.asm");
+            string[] allLines = jslfile.Split('\n');
+            bool comment = true;
+            string tmpComment = "";
+            string tmpName = "";
+            int tmpAddr = 0;
+            foreach (string line in allLines)
+            {
+                
+
+                if (comment)
+                {
+                    if (line.Contains(';'))
+                    {
+                        tmpComment += line.TrimStart(';');
+                        continue;
+                    }
+
+                    if (line.Contains("org"))
+                    {
+                        string addrStr = line.Split(" $")[1];
+                        tmpAddr = int.Parse(addrStr, NumberStyles.HexNumber);
+                        comment = false;
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (line.Contains(":"))
+                    {
+                        tmpName = line.Substring(0, line.IndexOf(":"));
+                        // Write in a list comment, addr, label name
+                        ListBoxItem li = new ListBoxItem();
+                        li.Content = tmpName;
+                        li.ToolTip = tmpComment;
+                        functionListItems.Add(li);
+                        comment = true;
+                        tmpComment = "";
+                        continue;
+                    }
+                }
 
 
-
-
-
-
-
-
-
+            }
         }
 
         public void CreateProject(bool load = false)
@@ -1033,27 +1124,29 @@ namespace ZSpriteMaker
 
         public void UpdateBackground()
         {
-            MainScreenBack_Image.ClearBitmap(240);
-            if (Properties.Settings.Default.showBack)
+            if (projectLoaded)
             {
-                DrawHelper.DrawCheckerboard(MainScreenBack_Image);
+                MainScreenBack_Image.ClearBitmap(240);
+                if (Properties.Settings.Default.showBack)
+                {
+                    DrawHelper.DrawCheckerboard(MainScreenBack_Image);
+                }
+                if (Properties.Settings.Default.showGrid)
+                {
+                    DrawHelper.DrawGrid(MainScreenBack_Image, Properties.Settings.Default.gridSize);
+                }
+                if (Properties.Settings.Default.showCenter)
+                {
+                    DrawHelper.DrawCenter(MainScreenBack_Image);
+                }
+                if (Properties.Settings.Default.showHitbox)
+                {
+                    DrawHitbox();
+                }
+                MainScreenBack_Image.UpdatePalette(editor.GetPalettes());
+                MainScreenBack_Image.UpdateBitmap();
+                MainScreenBack.Source = MainScreenBack_Image.bitmap;
             }
-            if (Properties.Settings.Default.showGrid)
-            {
-                DrawHelper.DrawGrid(MainScreenBack_Image, Properties.Settings.Default.gridSize);
-            }
-            if (Properties.Settings.Default.showCenter)
-            {
-                DrawHelper.DrawCenter(MainScreenBack_Image);
-            }
-            if (Properties.Settings.Default.showHitbox)
-            {
-                DrawHitbox();
-            }
-            MainScreenBack_Image.UpdatePalette(editor.GetPalettes());
-            MainScreenBack_Image.UpdateBitmap();
-            MainScreenBack.Source = MainScreenBack_Image.bitmap;
-
         }
 
         private void HeaderButtonToggled_CheckedChanged(object sender, RoutedEventArgs e)
@@ -1413,20 +1506,23 @@ namespace ZSpriteMaker
 
         private void SheetScreen_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            int mouse_x = (int)(e.GetPosition((IInputElement)e.Source).X / sheetDPI);
-            int mouse_y = (int)(e.GetPosition((IInputElement)e.Source).Y / sheetDPI);
+            if (projectLoaded)
+            {
+                int mouse_x = (int)(e.GetPosition((IInputElement)e.Source).X / sheetDPI);
+                int mouse_y = (int)(e.GetPosition((IInputElement)e.Source).Y / sheetDPI);
 
-            int tileX = (mouse_x / 8);
-            int tileY = (mouse_y / 8);
+                int tileX = (mouse_x / 8);
+                int tileY = (mouse_y / 8);
 
-            ushort t = (ushort)(tileX + (tileY * 16));
-            editor.SelectedTile = t;
+                ushort t = (ushort)(tileX + (tileY * 16));
+                editor.SelectedTile = t;
 
-            editor.selectedTiles.Clear();
-            
-            editor.UpdateSheets(SheetScreen_Image, SheetScreenOverlay_Image, sheetValues);
+                editor.selectedTiles.Clear();
 
-            RefreshScreen();
+                editor.UpdateSheets(SheetScreen_Image, SheetScreenOverlay_Image, sheetValues);
+
+                RefreshScreen();
+            }
         }
 
         private void PaletteScreen_MouseDown(object sender, MouseButtonEventArgs e)
@@ -1622,7 +1718,7 @@ namespace ZSpriteMaker
 
             AsarCLR.Asar.init();
 
-            AsarCLR.Asar.patch("SpriteMakerEngine\\playtest.asm", ref romData ,new string[1] { "SpriteMakerEngine/" });
+            AsarCLR.Asar.patch("SpriteMakerEngine/playtest.asm", ref romData ,new string[1] { "SpriteMakerEngine/" });
 
             AsarCLR.Asarerror[] errors = AsarCLR.Asar.geterrors();
 
@@ -1634,7 +1730,7 @@ namespace ZSpriteMaker
                 {
                     if (errors[0].Line >= routinesStartLine[i])
                     {
-                        line = (errors[0].Line - routinesStartLine[i])+1;
+                        line = (errors[0].Line - routinesStartLine[i])-2;
                         action = i;
                         break;
                     }
@@ -1815,8 +1911,8 @@ namespace ZSpriteMaker
             StringBuilder sbS = new StringBuilder();
             sbIndex.AppendLine(".start_index");
             sbNbr.AppendLine(".nbr_of_tiles");
-            sbIndex.Append("dw");
-            sbNbr.Append("dw");
+            sbIndex.Append("db");
+            sbNbr.Append("db");
             for (int i = 0; i < 48; i++)
             {
                 if (editor.Frames[i].Tiles.Count != 0)
@@ -2381,6 +2477,12 @@ namespace ZSpriteMaker
             
         }
 
+        private void shiftActionButton_Click(object sender, RoutedEventArgs e)
+        {
+
+
+        }
+
 
         int previousCode = -1;
         private void userroutinesListbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2457,6 +2559,43 @@ namespace ZSpriteMaker
 
             property_hitbox.Text = hitbox.ToString("X2");
 
+        }
+
+        private void MainScreen_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (e.Key == Key.Down)
+            {
+                MoveSelectedTiles(0, 1);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Left)
+            {
+                MoveSelectedTiles(-1, 0);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Right)
+            {
+                MoveSelectedTiles(1, 0);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Up)
+            {
+                MoveSelectedTiles(0, -1);
+                e.Handled = true;
+            }
+
+        }
+
+
+        private void MoveSelectedTiles(int x, int y)
+        {
+            foreach (OamTile tile in editor.selectedTiles)
+            {
+                tile.x += (byte)x;
+                tile.y += (byte)y;
+            }
+            RefreshScreen();
         }
     }
 }

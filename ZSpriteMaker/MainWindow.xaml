@@ -14,6 +14,7 @@
         <KeyBinding Key="N" Modifiers="Ctrl" Command="ApplicationCommands.New"/>
         <KeyBinding Key="O" Modifiers="Ctrl" Command="ApplicationCommands.Open"/>
         <KeyBinding Key="S" Modifiers="Ctrl" Command="ApplicationCommands.Save"/>
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="ApplicationCommands.SaveAs"/>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="ApplicationCommands.Undo"/>
         <KeyBinding Key="Y" Modifiers="Ctrl" Command="ApplicationCommands.Redo"/>
         <KeyBinding Key="X" Modifiers="Ctrl" Command="ApplicationCommands.Cut"/>
@@ -32,8 +33,10 @@
         <CommandBinding Command="ApplicationCommands.Paste" Executed="Paste_Command"/>
         <CommandBinding Command="ApplicationCommands.SelectAll" Executed="SelectAll_Command"/>
         <CommandBinding Command="ApplicationCommands.Delete" Executed="Delete_Command"/>
+        <CommandBinding Command="ApplicationCommands.CorrectionList" Executed="Shift_Command"/>
         <CommandBinding Command="ApplicationCommands.New" Executed="New_Command"/>
         <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Command"/>
+        <CommandBinding Command="ApplicationCommands.SaveAs" Executed="SaveAs_Command"/>
     </Window.CommandBindings>
 
     
@@ -46,6 +49,7 @@
                 <MenuItem Header="_New" InputGestureText="Ctrl+N" Command="ApplicationCommands.New" Template="{DynamicResource SingleDropDownMenuItem}"/>
                 <MenuItem Header="_Open" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open" Template="{DynamicResource SingleDropDownMenuItem}"/>
                 <MenuItem Header="_Save" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                <MenuItem Header="_Save_as" InputGestureText="Ctrl+Shift+S" Command="ApplicationCommands.SaveAs" Template="{DynamicResource SingleDropDownMenuItem}"/>
                 <MenuItem Header="_Export Asm" Click="ExportAsm_Click" Template="{DynamicResource SingleDropDownMenuItem}"/>
                 <Separator/>
                 <MenuItem Header="_Exit" InputGestureText="Ctrl+Q" Command="ApplicationCommands.Close" Template="{DynamicResource SingleDropDownMenuItem}"/>
@@ -60,7 +64,7 @@
                 <Separator/>
                 <MenuItem Header="_Select All"  InputGestureText="Ctrl+A" Command="ApplicationCommands.SelectAll" Template="{DynamicResource SingleDropDownMenuItem}"/>
                 <MenuItem Header="_Delete"  InputGestureText="Delete" Command="ApplicationCommands.Delete" Template="{DynamicResource SingleDropDownMenuItem}"/>
-                
+                <MenuItem Header="_Shift Frames" Command="ApplicationCommands.CorrectionList" Template="{DynamicResource SingleDropDownMenuItem}"/>
             </MenuItem>
             <MenuItem Header="_Preferences">
                 <MenuItem Header="_Dark Theme" Checked="DarkTheme_Checked" Unchecked="DarkTheme_Unchecked" IsCheckable="true" Template="{DynamicResource SingleDropDownMenuItem}" IsChecked="True"/>
@@ -148,12 +152,12 @@
         </ToolBar>
         
         
-        <StackPanel x:Name="mainStackPanel" Margin="4,10,10,4" DockPanel.Dock="Left" Orientation="Vertical" Width="512">
+        <StackPanel x:Name="mainStackPanel" Margin="4,10,10,4" DockPanel.Dock="Left" Orientation="Vertical" Width="512" FocusManager.IsFocusScope="True">
 
             <Grid x:Name="gridMainScreen" Focusable="True">
                 <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MainScreenBack" HorizontalAlignment="Left" Height="448" Margin="0,0,0,0" VerticalAlignment="Top" Width="512" Panel.ZIndex="1" />
                 <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MainScreenLayer" HorizontalAlignment="Left" Height="448" Margin="0,0,0,0" VerticalAlignment="Top" Width="512" Opacity="0.40" Panel.ZIndex="2"/>
-                <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MainScreen" HorizontalAlignment="Left" Height="448" Margin="0,0,0,0" VerticalAlignment="Top" Width="512" MouseDown="MainScreen_MouseDown" MouseUp="MainScreen_MouseUp" MouseMove="MainScreen_MouseMove" Panel.ZIndex="3" />
+                <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MainScreen" Focusable="True" HorizontalAlignment="Left" Height="448" Margin="0,0,0,0" VerticalAlignment="Top" Width="512" MouseDown="MainScreen_MouseDown" MouseUp="MainScreen_MouseUp" MouseMove="MainScreen_MouseMove" KeyDown="MainScreen_KeyDown" Panel.ZIndex="3" />
 
 
             </Grid>
@@ -354,56 +358,7 @@
 
                                     <StackPanel>
                                         <ListBox x:Name="functionsListbox" SelectionChanged="functionsListbox_SelectionChanged">
-                                            <ListBoxItem Content="Sprite_SetSpawnedCoords" ToolTip="Set the position of the spawned sprite to current sprite"/>
-                                            <ListBoxItem Content="Sprite_PrepOamCoord" ToolTip="set the oam coordinate for the sprite draw"/>
-                                            <ListBoxItem Content="Sprite_CheckDamageFromPlayer" ToolTip="check if the sprite is getting damage from player or items (required to damage the sprite)"/>
-                                            <ListBoxItem Content="Sprite_CheckDamageToPlayer" ToolTip="check if the sprite is touching the player to damage (required to damage the player)"/>
-                                            <ListBoxItem Content="Sprite_AttemptDamageToPlayerPlusRecoil" ToolTip="damage the player everywhere on screen with recoil must be used conditionally"/>
-                                            <ListBoxItem Content="Sprite_OAM_AllocateDeferToPlayer" ToolTip="Draw the sprite depending of the position of the player (if he has to be over or under link)"/>
-                                            <ListBoxItem Content="OAM_AllocateFromRegionA" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
-                                            <ListBoxItem Content="OAM_AllocateFromRegionB" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
-                                            <ListBoxItem Content="OAM_AllocateFromRegionC" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
-                                            <ListBoxItem Content="OAM_AllocateFromRegionD" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
-                                            <ListBoxItem Content="OAM_AllocateFromRegionE" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
-                                            <ListBoxItem Content="OAM_AllocateFromRegionF" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
-                                            <ListBoxItem Content="Sprite_DrawMultiple_quantity_preset" ToolTip="Allocate position where to draw the sprite in OAM (Advanced user only"/>
-                                            <ListBoxItem Content="ApplyRumbleToSprites" ToolTip="makes all the sprites on screen shaking"/>
-                                            <ListBoxItem Content="CheckIfHitBoxesOverlap" ToolTip=";args ;!pos1_low  = $00&#x0a;&#x0a;!pos1_size = $02&#x0a;!pos2_low  = $04&#x0a;!pos2_size = $06&#x0a;!pos1_high = $08&#x0a;!pos2_high = $0A&#x0a;!ans_low   = $0F&#x0a;!ans_high  = $0C&#x0a;returns carry clear if there was no overlap"/>
-                                            <ListBoxItem Content="Sprite_Get_16_bit_Coords" ToolTip="$0FD8 = sprite's X coordinate, $0FDA = sprite's Y coordinate"/>
-                                            <ListBoxItem Content="Sprite_PrepAndDrawSingleLarge" ToolTip="load / draw a  16x16 sprite"/>
-                                            <ListBoxItem Content="Sprite_PrepAndDrawSingleSmall" ToolTip="load / draw a  8x8 sprite"/>
-                                            <ListBoxItem Content="Sprite_DrawShadow" ToolTip=""/>
-                                            <ListBoxItem Content="Sprite_CheckTileCollision" ToolTip="check if the sprite is colliding with a solid tile set $0E70, X&#x0a;----udlr , u = up, d = down, l = left, r = right"/>
-                                            <ListBoxItem Content="Sprite_GetTileAttr" ToolTip="$00[0x02] - Entity Y coordinate&#x0a;$02[0x02] - Entity X coordinate"/>
-                                            <ListBoxItem Content="Sprite_CheckSlopedTileCollision" ToolTip="check if the sprite is colliding with a solid sloped tile"/>
-                                            <ListBoxItem Content="Sprite_ApplySpeedTowardsPlayer" ToolTip="set the velocity x,y towards the player (A = speed)"/>
-                                            <ListBoxItem Content="Sprite_DirectionToFacePlayer" ToolTip="; $0E is low byte of player_y_pos - sprite_y_pos&#x0a;$0F is low byte of player_x_pos - sprite_x_pos"/>
-                                            <ListBoxItem Content="Sprite_IsToRightOfPlayer" ToolTip="if Link is to the left of the sprite, Y = 1, otherwise Y = 0."/>
-                                            <ListBoxItem Content="Sprite_IsBelowPlayer" ToolTip="return Y=1 sprite is below player, otherwise Y = 0"/>
-                                            <ListBoxItem Content="Sprite_CheckDamageToPlayerSameLayer" ToolTip="check damage done to player if they collide and if they are on same layer"/>
-                                            <ListBoxItem Content="Sprite_CheckDamageToPlayerIgnoreLayer" ToolTip="check damage done to player if they collide even if they are not on same layer"/>
-                                            <ListBoxItem Content="Sound_SetSfx1PanLong" ToolTip="play a sound loaded in A"/>
-                                            <ListBoxItem Content="Sound_SetSfx2PanLong" ToolTip="play a sound loaded in A"/>
-                                            <ListBoxItem Content="Sound_SetSfx3PanLong" ToolTip="play a sound loaded in A"/>
-                                            <ListBoxItem Content="Sprite_SpawnDynamically" ToolTip=";spawn a new sprite on screen, A = sprite id&#x0a;when using this function you have to set the position yourself&#x0a;these values belong to the sprite who used that function not the new one &#x0a;$00 low x, $01 high x&#x0a;$02 low y, $03 high y&#x0a;$04 height, $05 low x (overlord)&#x0a;$06 high x (overlord), $07 low y (overlord)&#x0a;$08 high y (overlord)"/>
-                                            <ListBoxItem Content="Player_ResetState" ToolTip="Used to reset the player state like swimming, grabbing, reading ,etc..."/>
-                                            <ListBoxItem Content="Sprite_ApplyConveyorAdjustment" ToolTip="The sprite will be affected by conveyor"/>
-                                            <ListBoxItem Content="Sprite_SetupHitBoxLong" ToolTip="Set the hitbox of the player"/>
-                                            <ListBoxItem Content="Dungeon_SpriteInducedTilemapUpdate" ToolTip=""/>
-                                            <ListBoxItem Content="GetRandomInt" ToolTip="Will return a random value in A"/>
-                                            <ListBoxItem Content="Sprite_PlayerCantPassThrough" ToolTip="Player cannot go throught the hitbox"/>
-                                            <ListBoxItem Content="Sprite_NullifyHookshotDrag" ToolTip="If player is colliding with the sprite while using the hookshot it will cancel hookshot"/>
-                                            <ListBoxItem Content="Player_HaltDashAttack" ToolTip="Will prevent player from dashing"/>
-                                            <ListBoxItem Content="Sprite_ShowMessageUnconditional" ToolTip=";show a message box without any condition&#x0a;A = low byte of message ID to use.&#x0a;Y = high byte of message ID to use."/>
-                                            <ListBoxItem Content="Link_ReceiveItem" ToolTip="Y = item id&#x0a;Link will receive the item in Y over his head"/>
-                                            <ListBoxItem Content="Sprite_ShowSolicitedMessageIfPlayerFacing" ToolTip="show a message if we press A and face the sprite&#x0a;A = low byte of message ID to use.&#x0a;Y = high byte of message ID to use."/>
-                                            <ListBoxItem Content="Sprite_ShowMessageFromPlayerContact" ToolTip="show a message if we touch the sprite should be used with Sprite_PlayerCantPassThrough&#x0a;A = low byte of message ID to use.&#x0a;Y = high byte of message ID to use."/>
-                                            <ListBoxItem Content="Sprite_ProjectSpeedTowardsEntityLong" ToolTip=";04 = X&#x0a;05 = HighX&#x0a;06 = Y&#x0a;07 = HighY&#x0a;A = Speed&#x0a;Return $00 - Y Velocity&#x0a;Return $01 - X Velocity"/>
-                                            <ListBoxItem Content="Sprite_SpawnFireball" ToolTip="Spawn a fireball aimed at the player"/>
-                                            <ListBoxItem Content="Sprite_MoveLong" ToolTip="Required to make the sprite move using velocity"/>
-                                            <ListBoxItem Content="Sprite_DrawRippleIfInWater" ToolTip="Draw ripples in water"/>
-                                            <ListBoxItem Content="Sprite_SpawnSparkleGarnish" ToolTip="Draw some sparkles"/>
-                                            <ListBoxItem Content="Sprite_ProjectSpeedTowardsPlayer" ToolTip="Same as ProjectSpeedTowardsEntityLong but towards the player"/>
+
                                         </ListBox>
                                     </StackPanel>
                                 </ScrollViewer>
