@@ -197,8 +197,13 @@ macro SetTimerF(length)
 LDA.b #<length> : STA.w SprTimerF, X
 endmacro
 
+SprRoom      = $0C9A ; Contains the area or room id the sprite has been loaded in
+SprDrop      = $0CBA ; 00: Drop nothing, 01: drop normal key, 03: Drop green rupee, OtherValues: Drop big key
+
 SprAction    = $0D80 ; This is used to determine what action(subroutine) we are currerntly running
 SprFrame     = $0DC0 ; Determine the Frame used for the sprite
+SprDamage    = $0CD2 ; Bump damage the sprite can inflict to the player
+SprDmgTaken  = $0CE2 ; any value written here is the number of HP the sprite will lose on next frame
 
 SprMiscA     = $0DA0 ; This can be used to do anything in sprite
 SprMiscB     = $0DB0 ; This can be used to do anything in sprite
@@ -220,7 +225,7 @@ SprTimerE    = $0F10 ; This is a timer, value is decreased by 1 every frame
 SprTimerF    = $0F80 ; This is a timer, value is decreased by 2 every frame is also used by the gravity routine
 
 SprPause     = $0F00 ; Will put the sprite in pause mode used by the (IsActive) function
-SprFloor     = $0F20 ; Return the floor the sprite is on either 0 (top layer), 1 (bottom layer)
+SprLayer    = $0F20 ; Return the floor the sprite is on either 0 (top layer), 1 (bottom layer)
 SprType      = $0E20 ; This contains the ID of the sprite 00 = raven, 01 = vulture, etc...
 SprSubtype   = $0E30 ; This contains the Subtype ID of the sprite
 SprState     = $0DD0 ; This tells if the sprite is alive, dead, frozen, etc...
@@ -257,15 +262,20 @@ SprXRound    = $0D70 ; X Position rounded to 8 pixel
 SprCachedX   = $0FD8 ; Doesn't need to be indexed with X it contains the 16bit position X of the sprite
 SprCachedY   = $0FDA ; Doesn't need to be indexed with X it contains the 16bit position Y of the sprite
 
+FrameCounter = $1A ; value that is increasing every frame and loop forever
+Indoor       = $1B ; 0: outside, 1: indoor
+UpdPalFlag   = $15 ; Update all palettes from values in $7EC500-$7EC700 if non-zero
 
 LinkY        = $20 ; Position Y of link
 LinkYH       = $21 ; High position Y of link
 LinkX        = $22 ; Position X of link
 LinkXH       = $23 ; High position X of link
 
-LinkPushDir  = $26 ; ----UDLR [U Up][D Down][L Left][R Right] This is the direction link is pushing against 
+LinkPushDir  = $26 ; ----UDLR [U Up][D Down][L Left][R Right] Direction link is pushing against 
 LinkFacingDir= $2F ; Direction link is facing 00:Up, 02:Down, 04:Left, 06:Right
 LinkLastDir  = $66 ; Last direction link moved towards 00:Up, 01:Down, 02:Left, 03:Right
+LinkMoveDir  = $67 ; ----UDLR [U Up][D Down][L Left][R Right] direction link is "walking towards"
+LinkMoveInfo = $6A ; 0: Not moving, 1: Moving but NOT diagonally, 2: Moving diagonally
 
 LinkRecoilY  = $27 ; Recoiling speed Y of link
 LinkRecoilX  = $28 ; Recoiling speed X of link
@@ -275,8 +285,73 @@ ButtonAFlag  = $3B ; bit7: Button A is down (A-------)
 LinkVisible  = $4B ; if set to 0x0C link will be invisible
 LinkBunnyGfx = $56 ; if set to 1 link will be bunny, otherwise link
 
-LinkSpeed    = $57 ; 0x00 = normal speed, 0x01-0x0F = slow, > 0x10 = fast
-LinkSpeedTbl = $5E ; 0x00 = normal speed, 0x02 = walking on stair speed, 0x10 dashing speed
+LinkSpeed    = $57 ; 0x00: normal speed, 0x01-0x0F: slow, > 0x10:fast
+LinkSpeedTbl = $5E ; 0x00: normal speed, 0x02: walking on stair speed, 0x10: dashing speed
 LinkFalling  = $5B ; if is set to 0x02 or 0x03 link is falling
 
 LinkState    = $5D ; See documentation for that address (0x00 = normal ground state, 0x01 falling, 0x02 recoil, 0x03 spin attack) and many more
+LinkDoorway  = $6C ; 0: Link is not in a doorway, 1: is in a vertical doorway, 2: is in horizontal doorway
+
+Mosaic       = $95 ; set the mosaic setting ($2106) XXXXDCBA [ABCD BG1/BG2/BG3/BG4][X size of the mosaic pixels 0-16]
+
+RawJoypad1L  = $F0 ; BYSTUDLR [B BButton][Y YButton][SSelect Button][TStart Button][UDLR dpad buttons Up, Down, Left, Right]
+RawJoypad1H  = $F2 ; AXLRIIII [A AButton][X Xbutton][L LButton][R RButton][I = controller ID]
+
+PressJoypad1L= $F4 ; BYSTUDLR [B BButton][Y YButton][SSelect Button][TStart Button][UDLR dpad buttons Up, Down, Left, Right]
+PressJoypad1H= $F6 ; AXLRIIII [A AButton][X Xbutton][L LButton][R RButton][I = controller ID]
+
+MusicControl = $012C ; set the music
+SFX1Control  = $012E
+SFX2Control  = $012F
+AMBSFXControl= $012D
+
+LinkGrabGfx  = $02DA ; 0: Nothing, 1: a hand in the air, 2: 2 hands in the air (like getting triforce)
+LinkPoofGfx  = $02E1 ; if not 0 add a poof gfx on link
+LinkBunTimer = $02E2 ; Bunny timer for link how many time you will stay in bunny before transforming back
+LinkMenuMove = $02E4 ; if not 0 prevent link from moving and opening the menu
+LinkGetDamage= $037B ; if not 0 prevent link from getting any damages from sprites
+
+LinkTochChest= $02E5 ; ----CCCC [C Touching chest id]
+LinkSomariaPl= $02F5 ; 0: Not on somaria platform, 2: On somaria platform
+LinkItemUse  = $0301 ; BP-AETHR [B Boomerang][P Powder][A Bow&Arrows][E UnusedItem][T UnusedItem][H Hammer][R Rods]
+LinkItemEquip= $0303 ; Currently equipped item on the Y button
+LinkCarrying = $0308 ; 0: Nothing, 1:Picking up something, 2: Throwing something
+
+LinkAnimation= $037A ; 0: Normal, 1: Shovel, 2: Praying, 4:Hookshot, 8:Somaria, 10: Bug net, 20: Read book, 40: Tree pull
+
+MovingFloorVS= $0310 ; Moving floor Vertical speed 16 bit
+MovingFloorHS= $0312 ; Moving floor Horizontal speed 16 bit
+LinkWallCheat= $037F ; If non zero can walk through walls
+
+
+
+AnciOAMPrior = $0280 ; Ancilla oam priority if non zero use highest priority for draw
+AnciCollTimer= $028A ; Ancilla collision timer to prevent doing collision code too often set to 06 after a collision
+AnciZSpeed   = $0294 ; Ancilla Z Speed
+AnciHeight   = $029E ; Ancilla Height how far it is from its shadow
+AnciHeightH  = $02A8 ; Ancilla Height hight byte how far it is from its shadow
+
+AnciMiscA    = $0BF0 ; This can be used to do anything in ancilla
+AnciMiscB    = $0C54 ; This can be used to do anything in ancilla
+AnciMiscC    = $0C5E ; This can be used to do anything in ancilla (often used to track item received)
+AnciMiscD    = $0C72 ; This can be used to do anything in ancilla (often used to track direction)
+
+
+AnciTimerA   = $0C68 ; This is a timer, value is decreased by 1 every frame
+
+
+AnciY        = $0BFA ; Position Y of the ancilla (Up to Down)
+AnciX        = $0C04 ; Position X of the ancilla (Left to Right) 
+AnciYH       = $0C0E ; High (often determine the room) Position Y of the ancilla (Up to Down)
+AnciXH       = $0C18 ; High (often determine the room) Position X of the ancilla (Left to Right) 
+AnciXSpeed   = $0C22 ; Y Speed of the ancilla can go negative to go up
+AnciYSpeed   = $0C2C ; X Speed of the ancilla can go negative to go left
+AnciLayer    = $0C7C ; return the floor where the ancilla is
+AnciOamBuffer= $0C86 ; Oam buffer?
+AnciOAMNbr   = $0C90 ; Number of OAM slots used
+
+AnciYsub     = $0C36 ; sub pixel for Y position for ancilla
+AnciXsub     = $0C40 ; sub pixel for X position for ancilla
+
+AnciType     = $0C4A ; Define what ancilla it is (00:nothing, 01: somaria blast, 02: Fire rod shot, etc...) read documentation
+
