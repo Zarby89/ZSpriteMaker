@@ -326,6 +326,7 @@ namespace ZSpriteMaker
 
                 UpdateUserRoutines();
                 userroutinesListbox.SelectedIndex = 0;
+                RefreshScreen();
             }
         }
         private void Save_Command(object sender, ExecutedRoutedEventArgs e)
@@ -455,6 +456,7 @@ namespace ZSpriteMaker
             if (sfd.ShowDialog() == true)
             {
                 Save(sfd.FileName);
+                savedFile = sfd.FileName;
             }
         }
 
