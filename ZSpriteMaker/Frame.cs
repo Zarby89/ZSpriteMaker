@@ -8,7 +8,9 @@ namespace ZSpriteMaker
 {
     internal class Frame
     {
+        public List<List<OamTile>> undoTiles = new List<List<OamTile>>();
         public List<OamTile> Tiles { get; set; } = new List<OamTile>();
+        public int undoPos = 0;
         public Frame()
         {
 
