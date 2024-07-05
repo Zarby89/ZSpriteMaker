@@ -403,7 +403,6 @@ namespace ZSpriteMaker
                 main.ClearBitmap(0);
                 Draw(main, sheetImage);
                 main.UpdateBitmap();
-                
 
             }
 
