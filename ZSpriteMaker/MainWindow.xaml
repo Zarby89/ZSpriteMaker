@@ -322,7 +322,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="140" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="204" />
+                        <ColumnDefinition Width="280" />
                     </Grid.ColumnDefinitions>
 
                     <DockPanel LastChildFill="False" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch">

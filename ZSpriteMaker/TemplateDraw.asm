@@ -1,7 +1,10 @@
-﻿JSL Sprite_PrepOamCoord
+﻿LDA.w SprVisible, X : BEQ .continueDraw
+RTS ; exit instead
+.continueDraw
+JSL Sprite_PrepOamCoord
 JSL Sprite_OAM_AllocateDeferToPlayer
 
-LDA $0DC0, X : CLC : ADC $0D90, X : TAY;Animation Frame
+LDA.w SprFrame, X : TAY ;Animation Frame
 LDA .start_index, Y : STA $06
 
 

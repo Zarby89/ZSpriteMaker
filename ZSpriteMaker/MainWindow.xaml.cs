@@ -461,7 +461,13 @@ namespace ZSpriteMaker
 
         private void Redo_Command(object sender, ExecutedRoutedEventArgs e)
         {
+            if (projectLoaded)
+            {
+                editor.Redo(cDPI, MainScreen_Image, MainScreenLayer_Image, SheetScreen_Image);
 
+
+            }
+            RefreshScreen();
         }
         private void Cut_Command(object sender, ExecutedRoutedEventArgs e)
         {
@@ -542,7 +548,8 @@ namespace ZSpriteMaker
         }
         private void Delete_Command(object sender, ExecutedRoutedEventArgs e)
         {
-                foreach (OamTile tile in editor.selectedTiles)
+            editor.AddUndo(editor.SelectedFrame);
+            foreach (OamTile tile in editor.selectedTiles)
                 {
                     editor.Frames[editor.SelectedFrame].Tiles.Remove(tile);
                 }
@@ -552,6 +559,7 @@ namespace ZSpriteMaker
 
         private void Shift_Command(object sender, ExecutedRoutedEventArgs e)
         {
+            editor.AddUndo(editor.SelectedFrame);
             ShiftWindow window = new ShiftWindow();
             window.ShowDialog();
 
@@ -629,7 +637,9 @@ namespace ZSpriteMaker
 
                 if (Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
+                    editor.AddUndo(editor.SelectedFrame);
                     editor.Frames[editor.SelectedFrame].Tiles.Add(new OamTile(CMX, CMY, false, false, editor.SelectedTile, editor.SelectedPalette, true));
+                    
                     RefreshScreen();
                     return;
                 }
@@ -658,6 +668,7 @@ namespace ZSpriteMaker
 
                 if (editor.selectedTiles.Count == 1)
                 {
+                    editor.AddUndo(editor.SelectedFrame);
                     groupboxProperty.IsEnabled = true;
                     mirrorXCheckbox.IsEnabled = true;
                     mirrorYCheckbox.IsEnabled = true;
@@ -674,6 +685,7 @@ namespace ZSpriteMaker
                 }
                 else
                 {
+                    editor.AddUndo(editor.SelectedFrame);
                     groupboxProperty.IsEnabled = true;
                     mirrorXCheckbox.IsEnabled = false;
                     mirrorYCheckbox.IsEnabled = false;
@@ -683,7 +695,7 @@ namespace ZSpriteMaker
                     oamYTextbox.IsEnabled = false;
                     oamZTextbox.IsEnabled = false;
                     UpdateSelectedTileInfos();
-
+                    
                 }
 
 
@@ -1286,6 +1298,7 @@ namespace ZSpriteMaker
             {
                 if (editor.selectedTiles.Count == 1)
                 {
+                    editor.AddUndo(editor.SelectedFrame);
                     editor.selectedTiles[0].mirrorX = mirrorXCheckbox.IsChecked ?? false;
                     RefreshScreen();
                 }
@@ -1298,6 +1311,7 @@ namespace ZSpriteMaker
             {
                 if (editor.selectedTiles.Count == 1)
                 {
+                    editor.AddUndo(editor.SelectedFrame);
                     editor.selectedTiles[0].mirrorY = mirrorYCheckbox.IsChecked ?? false;
                     RefreshScreen();
                 }
@@ -1311,6 +1325,7 @@ namespace ZSpriteMaker
             {
                 if (editor.selectedTiles.Count == 1)
                 {
+                    editor.AddUndo(editor.SelectedFrame);
                     editor.selectedTiles[0].size = sizeCheckbox.IsChecked ?? false;
                     RefreshScreen();
                 }
@@ -1340,6 +1355,7 @@ namespace ZSpriteMaker
                 {
                     if (editor.selectedTiles.Count == 1)
                     {
+                        editor.AddUndo(editor.SelectedFrame);
                         _ = byte.TryParse(oamXTextbox.Text, out byte x);
                         _ = byte.TryParse(oamYTextbox.Text, out byte y);
                         _ = byte.TryParse(oamZTextbox.Text, out byte z);
@@ -1362,6 +1378,7 @@ namespace ZSpriteMaker
             {
                 if (editor.selectedTiles.Count == 1)
                 {
+                    editor.AddUndo(editor.SelectedFrame);
                     _ = byte.TryParse(oamXTextbox.Text, out byte x);
                     _ = byte.TryParse(oamYTextbox.Text, out byte y);
                     _ = byte.TryParse(oamZTextbox.Text, out byte z);
@@ -1430,6 +1447,7 @@ namespace ZSpriteMaker
                 {
                     if (editor.selectedTiles.Count >= 1)
                     {
+                        editor.AddUndo(editor.SelectedFrame);
                         _ = byte.TryParse(paletteTextbox.Text, out byte pal);
                         for (int i = 0; i < editor.selectedTiles.Count; i++)
                         {
@@ -1448,6 +1466,7 @@ namespace ZSpriteMaker
             {
                 if (editor.selectedTiles.Count >= 1)
                 {
+                    editor.AddUndo(editor.SelectedFrame);
                     _ = byte.TryParse(paletteTextbox.Text, out byte pal);
 
 
@@ -1473,6 +1492,7 @@ namespace ZSpriteMaker
 
         private void AnimSpeedTextbox_TextChanged(object sender, TextChangedEventArgs e)
         {
+
             _ = byte.TryParse(animSpeedTextbox.Text, out byte speed);
             if (speed > 0)
             {

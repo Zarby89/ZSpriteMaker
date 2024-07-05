@@ -220,7 +220,7 @@ namespace ZSpriteMaker
         byte rectYEnd = 0;
         public void MouseDown(MouseEventArgs e, int DPI, PointeredImage main, PointeredImage layer, PointeredImage sheetImage)
         {
-            AddUndo(SelectedFrame);
+            
             byte mouse_x = (byte)(e.GetPosition((IInputElement)e.Source).X / DPI);
             byte mouse_y = (byte)(e.GetPosition((IInputElement)e.Source).Y / DPI);
 
@@ -398,18 +398,32 @@ namespace ZSpriteMaker
             if (Frames[SelectedFrame].undoPos > 0)
             {
                 selectedTiles.Clear();
-                Console.WriteLine("From : " + Frames[SelectedFrame].undoPos);
                 Frames[SelectedFrame].undoPos--;
                 Frames[SelectedFrame].Tiles = Frames[SelectedFrame].undoTiles[Frames[SelectedFrame].undoPos];
-                Console.WriteLine("To : " + Frames[SelectedFrame].undoPos);
                 main.ClearBitmap(0);
                 Draw(main, sheetImage);
                 main.UpdateBitmap();
                 
 
             }
+
         }
-        
+
+        public void Redo(int DPI, PointeredImage main, PointeredImage layer, PointeredImage sheetImage)
+        {
+
+            if (Frames[SelectedFrame].undoPos < Frames[SelectedFrame].undoTiles.Count-1)
+            {
+                selectedTiles.Clear();
+                Frames[SelectedFrame].undoPos++;
+                Frames[SelectedFrame].Tiles = Frames[SelectedFrame].undoTiles[Frames[SelectedFrame].undoPos];
+                main.ClearBitmap(0);
+                Draw(main, sheetImage);
+                main.UpdateBitmap();
+
+
+            }
+        }
 
         public static byte SnapByte(byte b)
         {
