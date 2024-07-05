@@ -176,5 +176,10 @@ namespace ZSpriteMaker
                 hitColorRect.Fill = new SolidColorBrush(c);
             }
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Properties.Settings.Default.UndoSizeString = undoBufferBox.Text;
+        }
     }
 }

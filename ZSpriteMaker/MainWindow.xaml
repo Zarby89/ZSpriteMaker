@@ -236,10 +236,7 @@
                         </StackPanel>
                         <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="PaletteScreen" Width="256" MinWidth="128" MinHeight="128" Height="128" HorizontalAlignment="Left" VerticalAlignment="Top" MouseDown="PaletteScreen_MouseDown"/>
                     </StackPanel>
-                    <Label Content="Selected Layer Changes History" DockPanel.Dock="Top"/>
-                    <StackPanel DockPanel.Dock="Right">
-                        <ListBox x:Name="actionListbox"/>
-                    </StackPanel>
+
                 </DockPanel>
             </TabItem>
 
@@ -357,7 +354,7 @@
                                 <ScrollViewer HorizontalScrollBarVisibility="Visible">
 
                                     <StackPanel>
-                                        <ListBox x:Name="functionsListbox" SelectionChanged="functionsListbox_SelectionChanged">
+                                        <ListBox x:Name="functionsListbox" SelectionChanged="functionsListbox_SelectionChanged" PreviewMouseDown="functionsListbox_PreviewMouseDown">
 
                                         </ListBox>
                                     </StackPanel>
@@ -371,7 +368,7 @@
                                 <ScrollViewer HorizontalScrollBarVisibility="Visible">
 
                                     <StackPanel>
-                                        <ListBox x:Name="macrosListbox" SelectionChanged="macrosListbox_SelectionChanged">
+                                        <ListBox x:Name="macrosListbox" SelectionChanged="macrosListbox_SelectionChanged" PreviewMouseDown="macrosListbox_PreviewMouseDown">
 
                                         </ListBox>
                                     </StackPanel>
@@ -385,54 +382,8 @@
                                 <ScrollViewer HorizontalScrollBarVisibility="Visible">
 
                                     <StackPanel>
-                                        <ListBox x:Name="ramListbox" SelectionChanged="ramListbox_SelectionChanged">
-                                            <ListBoxItem Tag="X" Content="SprAction" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprFrame" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprMiscA" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprMiscB" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprMiscC" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprMiscD" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprMiscE" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprMiscF" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprMiscG" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprStunTimer" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprTimerA" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprTimerB" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprTimerC" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprTimerD" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprTimerE" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprTimerF" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprPause" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprFloor" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprType" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprSubtype" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprState" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprNbrOAM" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprHealth" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprGfxProps" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprCollision" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprDelay" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprRecoil" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprDeath" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprProps" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprHitbox" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprHeight" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprHeightS" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprYRecoil" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprXRecoil" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprGfx" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprY" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprX" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprYH" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprXH" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprYSpeed" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprXSpeed" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprYRound" ToolTip=""/>
-                                            <ListBoxItem Tag="X" Content="SprXRound" ToolTip=""/>
-                                            <ListBoxItem Tag="" Content="SprCachedX" ToolTip=""/>
-                                            <ListBoxItem Tag="" Content="SprCachedY" ToolTip=""/>
-                                            <ListBoxItem Tag="" Content="OAMPtr" ToolTip=""/>
-                                            <ListBoxItem Tag="" Content="OAMPtrH" ToolTip=""/>
+                                        <ListBox x:Name="ramListbox" SelectionChanged="ramListbox_SelectionChanged" PreviewMouseDown="ramListbox_MouseDown">
+
                                         </ListBox>
                                     </StackPanel>
                                 </ScrollViewer>

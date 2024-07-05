@@ -16,6 +16,7 @@ namespace ZSpriteMaker
         public byte SelectedFrame { get; set; } = 0;
         public ushort SelectedTile { get; set; } = 0;
         public byte SelectedPalette { get; set; } = 0;
+        public int UndoBufferSize { get; set; } = 0;
 
         public Frame[] Frames { get; set; } = new Frame[48];
 
@@ -60,7 +61,10 @@ namespace ZSpriteMaker
             for(int i = 0;i<48;i++)
             {
                 Frames[i] = new();
+                AddUndo(i);
             }
+
+
 
             byte b = 0x80;
             b >>= 1;
@@ -216,6 +220,7 @@ namespace ZSpriteMaker
         byte rectYEnd = 0;
         public void MouseDown(MouseEventArgs e, int DPI, PointeredImage main, PointeredImage layer, PointeredImage sheetImage)
         {
+            AddUndo(SelectedFrame);
             byte mouse_x = (byte)(e.GetPosition((IInputElement)e.Source).X / DPI);
             byte mouse_y = (byte)(e.GetPosition((IInputElement)e.Source).Y / DPI);
 
@@ -351,6 +356,7 @@ namespace ZSpriteMaker
                 tile.tempy = tile.y;
             }
 
+            
 
 
             multiSelection = false;
@@ -362,6 +368,47 @@ namespace ZSpriteMaker
 
         }
 
+        public void AddUndo(int frame)
+        {
+
+            if (Frames[frame].undoPos != Frames[frame].undoTiles.Count - 1 && Frames[frame].undoPos != 20)
+            {
+                Frames[frame].undoTiles.RemoveRange(Frames[frame].undoPos, Frames[frame].undoTiles.Count - Frames[frame].undoPos);
+            }
+
+            Console.WriteLine("Added at : " + Frames[frame].undoPos);
+            List<OamTile> newList = new List<OamTile>();
+            foreach (OamTile tile in Frames[frame].Tiles)
+            {
+                newList.Add(new OamTile(tile.x, tile.y, tile.mirrorX, tile.mirrorY, tile.id, tile.palette, tile.size, tile.priority));
+            }
+            
+            Frames[frame].undoTiles.Insert(Frames[frame].undoPos, newList);
+            Frames[frame].undoPos++;
+            if (Frames[frame].undoTiles.Count > UndoBufferSize)
+            {
+                Frames[frame].undoPos = UndoBufferSize;
+                Frames[frame].undoTiles.RemoveAt(0);
+            }
+            Console.WriteLine("Now at position : " + Frames[frame].undoPos);
+        }
+
+        public void Undo(int DPI, PointeredImage main, PointeredImage layer, PointeredImage sheetImage)
+        {
+            if (Frames[SelectedFrame].undoPos > 0)
+            {
+                selectedTiles.Clear();
+                Console.WriteLine("From : " + Frames[SelectedFrame].undoPos);
+                Frames[SelectedFrame].undoPos--;
+                Frames[SelectedFrame].Tiles = Frames[SelectedFrame].undoTiles[Frames[SelectedFrame].undoPos];
+                Console.WriteLine("To : " + Frames[SelectedFrame].undoPos);
+                main.ClearBitmap(0);
+                Draw(main, sheetImage);
+                main.UpdateBitmap();
+                
+
+            }
+        }
         
 
         public static byte SnapByte(byte b)

@@ -8,11 +8,15 @@ Sprite_SetSpawnedCoords:
 org $06E416
 Sprite_PrepOamCoord:
 
+; Return Carry Set if sprite has received damage from player
+; can use BCC to make a condition is sprite has been damaged
 ;Sprite_CheckDamageFromPlayer LONG
 ;check if the sprite is getting damage from player or items
 org $06F2AA
 Sprite_CheckDamageFromPlayer:
 
+; Return Carry Set if sprite is colliding with player
+; can use BCC to make a condition if player has been touched
 ;Sprite_CheckDamageToPlayer LONG
 ;check if the sprite is touching the player to damage
 org $06F121

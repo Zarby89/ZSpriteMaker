@@ -20,9 +20,9 @@
             <Button Content="..." Width="32" Height="20" Click="romPathButton_Click"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
-            <Label Content="Asar Path " MinWidth="100"/>
-            <TextBox Text="{Binding Source={x:Static p:Settings.Default}, Path=asarPath, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="432" MaxWidth="432"/>
-            <Button Content="..." Width="32" Height="20" Click="asarPathButton_Click"/>
+            <Label Content="Undo buffer size" MinWidth="100"/>
+            <TextBox x:Name="undoBufferBox" VerticalAlignment="Center" MinWidth="80" Text="{Binding Source={x:Static p:Settings.Default}, Path=UndoSizeString, Mode=TwoWay}" TextChanged="TextBox_TextChanged"/>
+            <Label>number of times you can undo tiles changes (higher take more ram)</Label>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Height="24" DockPanel.Dock="Top">
             <Separator MinWidth="464" Width="565"/>
