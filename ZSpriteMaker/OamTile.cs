@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZSpriteMaker
 {
@@ -16,8 +12,8 @@ namespace ZSpriteMaker
             get => _y;
             set
             {
-                if (value >= 220){ _y = 0; }
-                else{_y = value; }
+                if (value >= 220) { _y = 0; }
+                else { _y = value; }
             }
         }
 
@@ -56,21 +52,21 @@ namespace ZSpriteMaker
         {
             byte[] xy = new byte[2];
 
-            xy[1] = (byte)((id / 16)*8); // Y Position
-            xy[0] = (byte)((id % 16)*8); // X Position
+            xy[1] = (byte)((id / 16) * 8); // Y Position
+            xy[0] = (byte)((id % 16) * 8); // X Position
 
             return xy;
         }
 
         public override string ToString()
         {
-            return (id.ToString() + "," + x.ToString() + "," + y.ToString() + "," + mirrorX.ToString() + "," + mirrorY.ToString() +","+ palette.ToString() + "," + size.ToString() + "," + z.ToString() + "," + priority.ToString());
+            return (id.ToString() + "," + x.ToString() + "," + y.ToString() + "," + mirrorX.ToString() + "," + mirrorY.ToString() + "," + palette.ToString() + "," + size.ToString() + "," + z.ToString() + "," + priority.ToString());
         }
 
         public int ToInt()
         {
             //missing size and z
-            return ((id<<16) | ((mirrorY ? 0 : 1)<<31) | ((mirrorX ? 0 : 1) << 30) | (priority << 28) | (palette << 25) | (x<<8) | y);
+            return ((id << 16) | ((mirrorY ? 0 : 1) << 31) | ((mirrorX ? 0 : 1) << 30) | (priority << 28) | (palette << 25) | (x << 8) | y);
         }
 
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
@@ -42,7 +38,7 @@ namespace ZSpriteMaker
         {
             int asmStart = xaml.IndexOf("<!--ASM>");
             int asmEnd = xaml.IndexOf("</ASM-->");
-            
+
 
             asm = xaml.Substring(asmStart + 8, asmEnd - (asmStart + 8));
 
@@ -100,7 +96,7 @@ namespace ZSpriteMaker
                     else if (ellipse.Tag.ToString() == "valueout")
                     {
                         ValueOut = control.TranslatePoint(new Point(8, 8), canvas);
-                        
+
                     }
                 }
             }
@@ -133,7 +129,7 @@ namespace ZSpriteMaker
             {
                 LineValue1.updateLinePos(ValueIn1, ValueIn1);
             }
-            
+
             if (values[1] != null)
             {
                 LineValue2.updateLinePos(ValueIn2, values[1].ValueOut);
@@ -153,14 +149,14 @@ namespace ZSpriteMaker
             {
                 s = asm.Substring(0, branchPos);
             }
-            
+
             return s;
         }
 
         public string GetASMAfterBranch()
         {
             int branchPos = asm.IndexOf("SPRed.AddBranch");
-            string s = asm.Substring(branchPos+15);
+            string s = asm.Substring(branchPos + 15);
             if (branchPos == -1)
             {
                 return "";

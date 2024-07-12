@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ZSpriteMaker
 {
@@ -16,10 +12,10 @@ namespace ZSpriteMaker
         public LogicAction parent { get; set; }
         public bool disposed { get; set; } = false;
 
-        
+
         public LogicAction(LogicAction parent, LogicActionType type, string labelString, string asmString, string labelBranch = "")
         {
-            
+
             this.parent = parent;
             this.labelString = labelString;
             this.type = type;

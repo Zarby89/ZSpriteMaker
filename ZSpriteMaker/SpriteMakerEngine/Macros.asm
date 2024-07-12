@@ -18,6 +18,15 @@ macro PlayAnimation(frame_start, frame_end, frame_wait)
     +
 endmacro
 
+; Set harmless flag, 0 = harmful, 1 = harmless
+macro SetHarmless(value)
+    LDA.w SprOAMHarm, X
+    AND #$7F
+    if <value> != 0
+        ORA.b #(<value>)<<7 
+    endif
+    STA.w SprOAMHarm, X
+endmacro
 
 ; Show message if the player is facing toward sprite and pressing A
 ; Return Carry Set if message is displayed
@@ -26,6 +35,11 @@ macro ShowSolicitedMessage(message_id)
     LDY.b #(<message_id>)>>8
     LDA.b #<message_id>
     JSL Sprite_ShowSolicitedMessageIfPlayerFacing
+endmacro
+
+; Do damage to player on contact if sprite is on same layer as player
+macro DoDamageToPlayerSameLayerOnContact()
+    JSL Sprite_CheckDamageToPlayerSameLayer
 endmacro
 
 ; Show message no matter what (should not be used without code condition)
@@ -42,7 +56,9 @@ macro MoveTowardPlayer(speed)
     JSL Sprite_MoveLong
 endmacro
 
-; Set or unset the room flag
+; Set Room Flag (Chest 6) 
+; Do not use if you have more than 5 chests or a small key under a pot
+; in that room unless you want it to be already opened/taken
 macro SetRoomFlag(value)
     if <value> != 0
     LDA $0403 : ORA #$20 : STA $0403

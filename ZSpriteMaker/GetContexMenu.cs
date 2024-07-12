@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows.Controls;
 
 namespace ZSpriteMaker
@@ -13,15 +9,15 @@ namespace ZSpriteMaker
         private MenuItem[] CM_items;
         private MenuItem[] GetContextMenu(MenuType menuType)
         {
-            switch(menuType)
+            switch (menuType)
             {
                 case MenuType.OneObjectSelected:
                     CM_items = new MenuItem[5];
-                    
-                    CM_items[0] = new MenuItem {Header = "Delete Selected Tile"};
+
+                    CM_items[0] = new MenuItem { Header = "Delete Selected Tile" };
                     CM_items[0].Click += CM_DeleteOAM;
 
-                    CM_items[1] = new MenuItem {Header = "Copy Selected Tile" };
+                    CM_items[1] = new MenuItem { Header = "Copy Selected Tile" };
                     CM_items[1].Click += CM_CopyOAM;
 
                     CM_items[2] = new MenuItem { Header = "Cut Selected Tile" };
@@ -69,7 +65,7 @@ namespace ZSpriteMaker
 
         private void SetMenuItems(ContextMenu CM, MenuItem[] items)
         {
-            foreach(MenuItem i in items)
+            foreach (MenuItem i in items)
             {
                 CM.Items.Add(i);
             }
@@ -91,7 +87,7 @@ namespace ZSpriteMaker
         }
         private void CM_AddOAM(object sender, System.Windows.RoutedEventArgs e)
         {
-            editor.Frames[editor.SelectedFrame].Tiles.Add(new OamTile(CMX,CMY,false,false,editor.SelectedTile,editor.SelectedPalette,true));
+            editor.Frames[editor.SelectedFrame].Tiles.Add(new OamTile(CMX, CMY, false, false, editor.SelectedTile, editor.SelectedPalette, true));
             RefreshScreen();
         }
 
@@ -105,13 +101,13 @@ namespace ZSpriteMaker
         {
             //Check all tiles in the editor set Z higher than any other tiles
             byte highestZ = 0;
-            foreach(OamTile t in editor.Frames[editor.SelectedFrame].Tiles)
+            foreach (OamTile t in editor.Frames[editor.SelectedFrame].Tiles)
             {
                 if (t.z >= highestZ)
                 {
                     if (t.z < 63)
                     {
-                        highestZ = (byte)(t.z+1);
+                        highestZ = (byte)(t.z + 1);
                     }
                     else
                     {
@@ -119,7 +115,7 @@ namespace ZSpriteMaker
                     }
                 }
             }
-            foreach(OamTile t in editor.selectedTiles)
+            foreach (OamTile t in editor.selectedTiles)
             {
                 t.z = highestZ;
             }

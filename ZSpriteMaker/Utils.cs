@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace ZSpriteMaker
 {
@@ -76,7 +71,7 @@ namespace ZSpriteMaker
                     case 04: // Repeat (Reversed byte order for maps)
                         byte b1 = romData[pos + 1];
                         byte b2 = romData[pos];
-                        int Addr = ((b1<<8) | b2);
+                        int Addr = ((b1 << 8) | b2);
                         for (int i = 0; i < length; i++)
                         {
                             buffer[bufferPos++] = buffer[Addr++];
@@ -94,45 +89,45 @@ namespace ZSpriteMaker
 
 
         static readonly byte[] bitmask = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
-         public static byte[] SNES3bppTo8bppSheet(byte[] buffer) // 128x32
-         {
-             byte[] data = new byte[0x1000];
-             int xx = 0; //positions where we are at on the sheet
-             int yy = 0;
-             int pos = 0;
-             int ypos = 0;
-             for (int i = 0; i < 64; i++) //for each tiles //16 per lines
-             {
-                 for (int y = 0; y < 8; y++)//for each lines
-                 {
-                     for (int x = 0; x < 8; x++)
-                     {
+        public static byte[] SNES3bppTo8bppSheet(byte[] buffer) // 128x32
+        {
+            byte[] data = new byte[0x1000];
+            int xx = 0; //positions where we are at on the sheet
+            int yy = 0;
+            int pos = 0;
+            int ypos = 0;
+            for (int i = 0; i < 64; i++) //for each tiles //16 per lines
+            {
+                for (int y = 0; y < 8; y++)//for each lines
+                {
+                    for (int x = 0; x < 8; x++)
+                    {
 
-                         byte b1 = (byte)(buffer[(y * 2) + (24 * pos)] & (bitmask[x]));
-                         byte b2 = (byte)(buffer[(y * 2) + (24 * pos) + 1] & (bitmask[x]));
-                         byte b3 = (byte)(buffer[(16 + y) + (24 * pos)] & (bitmask[x]));
-                         byte b = 0;
-                         if (b1 != 0) { b |= 1; };
-                         if (b2 != 0) { b |= 2; };
-                         if (b3 != 0) { b |= 4; };
-                         data[x + (xx) + (y * 128) + (yy * 1024)] = b;
-                     }
+                        byte b1 = (byte)(buffer[(y * 2) + (24 * pos)] & (bitmask[x]));
+                        byte b2 = (byte)(buffer[(y * 2) + (24 * pos) + 1] & (bitmask[x]));
+                        byte b3 = (byte)(buffer[(16 + y) + (24 * pos)] & (bitmask[x]));
+                        byte b = 0;
+                        if (b1 != 0) { b |= 1; };
+                        if (b2 != 0) { b |= 2; };
+                        if (b3 != 0) { b |= 4; };
+                        data[x + (xx) + (y * 128) + (yy * 1024)] = b;
+                    }
 
-                 }
-                 pos++;
-                 ypos++;
-                 xx += 8;
-                 if (ypos >= 16)
-                 {
-                     yy++;
-                     xx = 0;
-                     ypos = 0;
+                }
+                pos++;
+                ypos++;
+                xx += 8;
+                if (ypos >= 16)
+                {
+                    yy++;
+                    xx = 0;
+                    ypos = 0;
 
-                 }
-             }
+                }
+            }
 
-             return data;
-         }
+            return data;
+        }
         public static bool BitsAllSet(this byte b, byte test) => (b & test) == test;
         public static byte[] SNES3bppTo8bppSheet2(byte[] data)
         {

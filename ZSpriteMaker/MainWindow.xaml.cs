@@ -1,29 +1,19 @@
-﻿using System;
+﻿using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.Win32;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Windows.Threading;
-using ICSharpCode.AvalonEdit;
-using ICSharpCode;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace ZSpriteMaker
 {
@@ -85,7 +75,7 @@ namespace ZSpriteMaker
 
             string[] lines = File.ReadAllLines("symbols_wram.asm");
             int i = 0;
-            while(i < lines.Length)
+            while (i < lines.Length)
             {
                 string name = "";
                 StringBuilder desc = new StringBuilder();
@@ -106,7 +96,7 @@ namespace ZSpriteMaker
 
                     int lastCommentLine = -1;
                     int firstCommentLine = -1;
-                    for (int j = i-1; j > 0; j--)
+                    for (int j = i - 1; j > 0; j--)
                     {
                         if (lines[j].Length == 0)
                         {
@@ -121,11 +111,11 @@ namespace ZSpriteMaker
                                 lastCommentLine = j;
                             }
                         }
-                        else 
+                        else
                         {
                             if (lastCommentLine != -1) // did we already found a comment ?
                             {
-                                firstCommentLine = j+1;
+                                firstCommentLine = j + 1;
                                 break;
                             }
                         }
@@ -151,7 +141,7 @@ namespace ZSpriteMaker
                     }
 
                     ListBoxItem li = new ListBoxItem();
-                    li.Content = addr + " | " +  name;
+                    li.Content = addr + " | " + name;
                     li.ToolTip = desc;
                     zelda3symbols.Add(li);
 
@@ -235,17 +225,17 @@ namespace ZSpriteMaker
 
                 int aCount = br.ReadInt32(); // int 
 
-                for(int i = 0;i<aCount;i++)
+                for (int i = 0; i < aCount; i++)
                 {
                     string aname = br.ReadString();
                     byte afs = br.ReadByte();
                     byte afe = br.ReadByte();
                     byte afspeed = br.ReadByte();
 
-                    animations.Add(new AnimationGroup(afs,afe,afspeed,aname));
+                    animations.Add(new AnimationGroup(afs, afe, afspeed, aname));
                 }
                 RefreshAnimations();
-                
+
 
                 int fCount = br.ReadInt32(); // int 
                 for (int i = 0; i < fCount; i++)
@@ -306,7 +296,7 @@ namespace ZSpriteMaker
                     property_sprname.Text = br.ReadString();
 
                     int actionL = br.ReadInt32();
-                    for(int i = 0; i < actionL; i++)
+                    for (int i = 0; i < actionL; i++)
                     {
 
                         string a = br.ReadString();
@@ -552,11 +542,11 @@ namespace ZSpriteMaker
         {
             editor.AddUndo(editor.SelectedFrame);
             foreach (OamTile tile in editor.selectedTiles)
-                {
-                    editor.Frames[editor.SelectedFrame].Tiles.Remove(tile);
-                }
-                editor.selectedTiles.Clear();
-                RefreshScreen();
+            {
+                editor.Frames[editor.SelectedFrame].Tiles.Remove(tile);
+            }
+            editor.selectedTiles.Clear();
+            RefreshScreen();
         }
 
         private void Shift_Command(object sender, ExecutedRoutedEventArgs e)
@@ -627,7 +617,7 @@ namespace ZSpriteMaker
         {
             if (projectLoaded)
             {
-                
+
                 logicEdtiorSelected = false;
                 gridMainScreen.Focus();
                 MainScreen.Focus();
@@ -641,7 +631,7 @@ namespace ZSpriteMaker
                 {
                     editor.AddUndo(editor.SelectedFrame);
                     editor.Frames[editor.SelectedFrame].Tiles.Add(new OamTile(CMX, CMY, false, false, editor.SelectedTile, editor.SelectedPalette, true));
-                    
+
                     RefreshScreen();
                     return;
                 }
@@ -697,7 +687,7 @@ namespace ZSpriteMaker
                     oamYTextbox.IsEnabled = false;
                     oamZTextbox.IsEnabled = false;
                     UpdateSelectedTileInfos();
-                    
+
                 }
 
 
@@ -734,9 +724,9 @@ namespace ZSpriteMaker
 
             actions.Add(new("Start - Nothing", editor.SelectedFrame, array));
             RefreshActions();*/
-            }
+        }
 
-            private void MainScreen_MouseUp(object sender, MouseButtonEventArgs e)
+        private void MainScreen_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (projectLoaded)
             {
@@ -817,10 +807,10 @@ namespace ZSpriteMaker
                 changedFromForm = true;
                 sliderFramebox.Text = FrameSlider.Value.ToString();
                 changedFromForm = false;
-                
+
                 //SliderLabel.Content = "Frame : " + FrameSlider.Value.ToString();
                 editor.SelectedFrame = (byte)FrameSlider.Value;
-                
+
                 editor.selectedTiles.Clear();
 
                 RefreshScreen();
@@ -853,7 +843,7 @@ namespace ZSpriteMaker
                 codeEditor.FontSize = settings.previewLabelFont.FontSize;
                 Properties.Settings.Default.FontFamily = codeEditor.FontFamily.ToString();
                 Properties.Settings.Default.FontSize = codeEditor.FontSize;
-                
+
                 Properties.Settings.Default.Save();
             }
 
@@ -923,7 +913,7 @@ namespace ZSpriteMaker
         {
             gridSizeBox.Text = Properties.Settings.Default.gridSize.ToString();
             snapSizeBox.Text = Properties.Settings.Default.snapSize.ToString();
-            
+
         }
 
         public void CreateMacros()
@@ -940,7 +930,7 @@ namespace ZSpriteMaker
                 {
                     break;
                 }
-                int macroNameStart = descEnd +6;
+                int macroNameStart = descEnd + 6;
                 int macroNameEnd = macrofile.IndexOf(')', pos);
                 if (descStart == -1 || descEnd == -1 || macroNameStart == -1 || macroNameEnd == -1)
                 {
@@ -948,8 +938,8 @@ namespace ZSpriteMaker
                 }
 
                 int macroEnd = macrofile.IndexOf("endmacro", pos);
-                string desc = macrofile.Substring(descStart, (descEnd - descStart)-2);
-                string name = macrofile.Substring(macroNameStart, (macroNameEnd - macroNameStart)+1);
+                string desc = macrofile.Substring(descStart, (descEnd - descStart) - 2);
+                string name = macrofile.Substring(macroNameStart, (macroNameEnd - macroNameStart) + 1);
                 pos = macroEnd;
                 ListBoxItem li = new ListBoxItem();
                 li.Content = name;
@@ -964,14 +954,14 @@ namespace ZSpriteMaker
             ramListItems.Clear();
             string[] symbolfile = File.ReadAllLines("SpriteMakerEngine/SymbolsDefines.asm");
             int lineid = 0;
-            
+
             while (lineid < symbolfile.Length)
             {
                 bool isIndexed = false;
                 string line = symbolfile[lineid];
                 string tmpComment = "";
                 string tmpName = "";
-                int commentPos = line.IndexOf(';', 0)+2;
+                int commentPos = line.IndexOf(';', 0) + 2;
                 int nameEndPos = line.IndexOf(' ');
                 if (line.Length == 0)
                 {
@@ -986,7 +976,7 @@ namespace ZSpriteMaker
 
                 if (commentPos != -1)
                 {
-                    if (line[commentPos-1] == 'X')
+                    if (line[commentPos - 1] == 'X')
                     {
                         isIndexed = true;
                     }
@@ -1014,7 +1004,7 @@ namespace ZSpriteMaker
             int tmpAddr = 0;
             foreach (string line in allLines)
             {
-                
+
 
                 if (comment)
                 {
@@ -1088,7 +1078,7 @@ namespace ZSpriteMaker
                 {
                     userroutinesListbox.SelectedIndex = 0;
                 }
-                
+
                 //UpdateStateListbox();
 
 
@@ -1115,7 +1105,7 @@ namespace ZSpriteMaker
         {
             int id = 0;
             string s = "Action" + id.ToString("D2");
-            while (userRoutines.Where(x => (x.name == s)).ToArray().Length>0)
+            while (userRoutines.Where(x => (x.name == s)).ToArray().Length > 0)
             {
                 id++;
                 s = "Action" + id.ToString("D2");
@@ -1128,7 +1118,7 @@ namespace ZSpriteMaker
         {
             if (userroutinesListbox.SelectedItem != null)
             {
-                userRoutines.RemoveAt(userroutinesListbox.SelectedIndex+3);
+                userRoutines.RemoveAt(userroutinesListbox.SelectedIndex + 3);
                 UpdateUserRoutines();
             }
         }
@@ -1138,10 +1128,10 @@ namespace ZSpriteMaker
             if (userroutinesListbox.SelectedItem != null)
             {
                 Rename renamewindow = new Rename();
-                renamewindow.actionnameTextbox.Text = userRoutines[userroutinesListbox.SelectedIndex+3].name;
+                renamewindow.actionnameTextbox.Text = userRoutines[userroutinesListbox.SelectedIndex + 3].name;
                 if (renamewindow.ShowDialog() == true)
                 {
-                    userRoutines[userroutinesListbox.SelectedIndex+3].name = renamewindow.actionnameTextbox.Text;
+                    userRoutines[userroutinesListbox.SelectedIndex + 3].name = renamewindow.actionnameTextbox.Text;
                 }
 
                 UpdateUserRoutines();
@@ -1156,9 +1146,9 @@ namespace ZSpriteMaker
             {
                 coreroutinesListbox.Items.Add(userRoutines[i].name);
             }
-            for (int i = 3;i<userRoutines.Count;i++)
+            for (int i = 3; i < userRoutines.Count; i++)
             {
-                userroutinesListbox.Items.Add((i-3).ToString("D2") + " " + userRoutines[i].name);
+                userroutinesListbox.Items.Add((i - 3).ToString("D2") + " " + userRoutines[i].name);
             }
         }
 
@@ -1646,7 +1636,7 @@ namespace ZSpriteMaker
         {
             if (projectLoaded)
             {
-                byte.TryParse(property_hitbox.Text,NumberStyles.HexNumber,CultureInfo.CurrentCulture, out byte hitbox);
+                byte.TryParse(property_hitbox.Text, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out byte hitbox);
 
                 byte hitbox_x = editor.ROM[0x3772F + hitbox];
                 byte hitbox_xhigh = editor.ROM[0x3774F + hitbox];
@@ -1740,9 +1730,9 @@ namespace ZSpriteMaker
 
             if (Properties.Settings.Default.VPointer == true)
             {
-                roompos = 0x0A8000;  
+                roompos = 0x0A8000;
                 sprPos = 0x09EB77;
-               
+
             }
 
 
@@ -1773,9 +1763,9 @@ namespace ZSpriteMaker
             sb.AppendLine("db $" + blockset1.Text + ", $" + blockset2.Text + ", $" + blockset3.Text + ", $" + blockset4.Text);
 
             sb.AppendLine("org $" + sprPos.ToString("X6"));
-            sb.AppendLine("db $00, $1A, $1A, $"+property_sprid.Text+", $FF");
+            sb.AppendLine("db $00, $1A, $1A, $" + property_sprid.Text + ", $FF");
 
-            sb.AppendLine("org $" + (headerlinkhouse+3).ToString("X6"));
+            sb.AppendLine("org $" + (headerlinkhouse + 3).ToString("X6"));
             sb.AppendLine("db $00");
 
             sb.AppendLine("; Skip intro");
@@ -1800,7 +1790,7 @@ namespace ZSpriteMaker
 
             AsarCLR.Asar.init();
 
-            AsarCLR.Asar.patch("SpriteMakerEngine/playtest.asm", ref romData ,new string[1] { "SpriteMakerEngine/" });
+            AsarCLR.Asar.patch("SpriteMakerEngine/playtest.asm", ref romData, new string[1] { "SpriteMakerEngine/" });
 
             AsarCLR.Asarerror[] errors = AsarCLR.Asar.geterrors();
 
@@ -1808,11 +1798,11 @@ namespace ZSpriteMaker
             {
                 int line = errors[0].Line;
                 int action = 0;
-                for (int i = routinesStartLine.Length-1; i >= 0;i--)
+                for (int i = routinesStartLine.Length - 1; i >= 0; i--)
                 {
                     if (errors[0].Line >= routinesStartLine[i])
                     {
-                        line = (errors[0].Line - routinesStartLine[i])-2;
+                        line = (errors[0].Line - routinesStartLine[i]) - 2;
                         action = i;
                         break;
                     }
@@ -1832,7 +1822,7 @@ namespace ZSpriteMaker
 
                 Process.Start(Properties.Settings.Default.emulatorPath, "temp.sfc");
             }
-            
+
 
 
 
@@ -1941,7 +1931,7 @@ namespace ZSpriteMaker
             sb.AppendLine("JSL UseImplicitRegIndexedLocalJumpTable; Goto the SprAction we are currently in");
 
             //TODO: FOR EACH ACTION IN userroutinesList write newline dw <actionname>
-            for(int i =3;i< userRoutines.Count;i++)
+            for (int i = 3; i < userRoutines.Count; i++)
             {
                 sb.AppendLine("dw " + userRoutines[i].name);
             }
@@ -2090,11 +2080,11 @@ namespace ZSpriteMaker
             return sb.ToString();
         }
 
-        
+
         private void ExportAsm_Click(object sender, RoutedEventArgs e)
         {
-            
-            SaveFileDialog sfd = new SaveFileDialog() {DefaultExt = ".asm" };
+
+            SaveFileDialog sfd = new SaveFileDialog() { DefaultExt = ".asm" };
             if (sfd.ShowDialog() == true)
             {
                 File.WriteAllText(sfd.FileName, GetASM());
@@ -2454,7 +2444,7 @@ namespace ZSpriteMaker
         {
             functionsListbox.SelectedIndex = -1;
             functionsListbox.Items.Clear();
-            
+
             List<ListBoxItem> list = functionListItems.Where(x => (x.Content.ToString().ToLower()).Contains(searchfunctionBox.Text.ToLower())).ToList();
             for (int i = 0; i < list.Count; i++)
             {
@@ -2556,7 +2546,7 @@ namespace ZSpriteMaker
         {
             previousCode = -1;
             RemoveUserRoutine();
-            
+
         }
 
         private void shiftActionButton_Click(object sender, RoutedEventArgs e)
@@ -2576,13 +2566,13 @@ namespace ZSpriteMaker
                     userRoutines[previousCode].code = codeEditor.Text;
                     //save that code
                 }
-                    codeEditor.Text = userRoutines[userroutinesListbox.SelectedIndex + 3].code;
-                    previousCode = userroutinesListbox.SelectedIndex + 3;
-                    coreroutinesListbox.SelectedIndex = -1;
+                codeEditor.Text = userRoutines[userroutinesListbox.SelectedIndex + 3].code;
+                previousCode = userroutinesListbox.SelectedIndex + 3;
+                coreroutinesListbox.SelectedIndex = -1;
             }
 
-            
-            
+
+
         }
 
         private void coreroutinesListbox_SelectionChanged(object sender, SelectionChangedEventArgs e)

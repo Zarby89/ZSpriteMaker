@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -58,7 +56,7 @@ namespace ZSpriteMaker
                 sheetID++;
             }
 
-            for(int i = 0;i<48;i++)
+            for (int i = 0; i < 48; i++)
             {
                 Frames[i] = new();
                 AddUndo(i);
@@ -74,7 +72,7 @@ namespace ZSpriteMaker
         public void Draw(PointeredImage dest, PointeredImage source)
         {
             Frames[SelectedFrame].Draw(dest, source);
-            foreach(OamTile tile in selectedTiles)
+            foreach (OamTile tile in selectedTiles)
             {
                 int size = (tile.size ? 16 : 8);
                 dest.WriteBitmapRect(tile.x, tile.y, size, size, 243);
@@ -97,11 +95,11 @@ namespace ZSpriteMaker
             {
                 for (int i = 0; i < 0x1000; i++)
                 {
-                    sheetsImage[i + (j*0x1000)] = allSpritesData[i + (sheetsids[j]*0x1000)];
+                    sheetsImage[i + (j * 0x1000)] = allSpritesData[i + (sheetsids[j] * 0x1000)];
                 }
             }
 
-           
+
             int tileY = SelectedTile / 16;
             int tileX = SelectedTile - (tileY * 16);
 
@@ -117,7 +115,7 @@ namespace ZSpriteMaker
             spritescolors.CopyTo(sheetPalette, 0);
             for (int i = 0; i < 16; i++)
             {
-                sheetPalette[i] = spritescolors[(SelectedPalette * 16)+i];
+                sheetPalette[i] = spritescolors[(SelectedPalette * 16) + i];
             }
             sheetsImage.UpdatePalette(sheetPalette);
             sheetsImage.UpdateBitmap();
@@ -131,23 +129,23 @@ namespace ZSpriteMaker
         const int swordPalettes = 0xDD630; // 3 colors each - 4 entries
         const int shieldPalettes = 0xDD648; // 4 colors each - 3 entries
 
-        
-        public Color[] GetPalettes(byte spr0 = 0,byte globalID = 0, byte spr1 = 3, byte spr2 = 1,byte pot = 10, byte sword = 0, byte shield = 0, byte link = 0)
+
+        public Color[] GetPalettes(byte spr0 = 0, byte globalID = 0, byte spr1 = 3, byte spr2 = 1, byte pot = 10, byte sword = 0, byte shield = 0, byte link = 0)
         {
-            
+
 
 
             for (int j = 0; j < 4; j++)
             {
                 for (int i = 0; i < 15; i++)
                 {
-                    spritescolors[(i+1) + (j*16) + 16] = Utils.ReadPaletteSingle(ROM, globalSpritePalettesLW + ((i+(j*15)) * 2) + (globalID*120));
+                    spritescolors[(i + 1) + (j * 16) + 16] = Utils.ReadPaletteSingle(ROM, globalSpritePalettesLW + ((i + (j * 15)) * 2) + (globalID * 120));
                 }
             }
 
             for (int i = 0; i < 7; i++)
             {
-                spritescolors[(i + 1)] = Utils.ReadPaletteSingle(ROM, spritePalettesAux1 + (spr0 * 14) + (i* 2));
+                spritescolors[(i + 1)] = Utils.ReadPaletteSingle(ROM, spritePalettesAux1 + (spr0 * 14) + (i * 2));
 
                 spritescolors[(i + 1) + 96] = Utils.ReadPaletteSingle(ROM, (spritePalettesAux3 + (spr2 * 14)) + (i * 2));
                 spritescolors[(i + 1) + 80] = Utils.ReadPaletteSingle(ROM, (spritePalettesAux3 + (spr1 * 14)) + (i * 2));
@@ -166,7 +164,7 @@ namespace ZSpriteMaker
 
             for (int i = 0; i < 15; i++)
             {
-                spritescolors[(i + 1) + 112] = Utils.ReadPaletteSingle(ROM, armorPalettes + (link*30) + (i * 2));
+                spritescolors[(i + 1) + 112] = Utils.ReadPaletteSingle(ROM, armorPalettes + (link * 30) + (i * 2));
             }
 
 
@@ -181,10 +179,10 @@ namespace ZSpriteMaker
             //======================================================================
             //Editor Related Palettes to do background draw, selection, etc
             //======================================================================
-            spritescolors[0] = Color.FromArgb(0,0,0,0);
+            spritescolors[0] = Color.FromArgb(0, 0, 0, 0);
             spritescolors[240] = Color.FromRgb(102, 102, 102);
             spritescolors[241] = Color.FromRgb(153, 153, 153);
-            
+
             spritescolors[242] = Color.FromRgb(
                 Properties.Settings.Default.gridR,
                 Properties.Settings.Default.gridG,
@@ -220,7 +218,7 @@ namespace ZSpriteMaker
         byte rectYEnd = 0;
         public void MouseDown(MouseEventArgs e, int DPI, PointeredImage main, PointeredImage layer, PointeredImage sheetImage)
         {
-            
+
             byte mouse_x = (byte)(e.GetPosition((IInputElement)e.Source).X / DPI);
             byte mouse_y = (byte)(e.GetPosition((IInputElement)e.Source).Y / DPI);
 
@@ -300,7 +298,7 @@ namespace ZSpriteMaker
                     }
 
 
-                    main.WriteBitmapRect(rectXStart, rectYStart,  rectXEnd - rectXStart, rectYEnd - rectYStart, 244);
+                    main.WriteBitmapRect(rectXStart, rectYStart, rectXEnd - rectXStart, rectYEnd - rectYStart, 244);
                     main.UpdateBitmap();
                 }
                 else if (mouse_x != mouse_x_old || mouse_y != mouse_y_old)
@@ -339,13 +337,13 @@ namespace ZSpriteMaker
             {
                 if (selectedTiles.Count == 0)
                 {
-                        foreach (OamTile tile in Frames[SelectedFrame].Tiles)
+                    foreach (OamTile tile in Frames[SelectedFrame].Tiles)
+                    {
+                        if (tile.x + (tile.size ? 16 : 8) >= rectXStart && tile.x <= rectXEnd &&
+                            tile.y + (tile.size ? 16 : 8) >= rectYStart && tile.y <= rectYEnd)
                         {
-                            if (tile.x + (tile.size ? 16 : 8) >= rectXStart && tile.x <= rectXEnd &&
-                                tile.y + (tile.size ? 16 : 8) >= rectYStart && tile.y <= rectYEnd)
-                            {
-                                selectedTiles.Add(tile);
-                            }
+                            selectedTiles.Add(tile);
+                        }
                     }
                 }
             }
@@ -356,7 +354,7 @@ namespace ZSpriteMaker
                 tile.tempy = tile.y;
             }
 
-            
+
 
 
             multiSelection = false;
@@ -382,7 +380,7 @@ namespace ZSpriteMaker
             {
                 newList.Add(new OamTile(tile.x, tile.y, tile.mirrorX, tile.mirrorY, tile.id, tile.palette, tile.size, tile.priority));
             }
-            
+
             Frames[frame].undoTiles.Insert(Frames[frame].undoPos, newList);
             Frames[frame].undoPos++;
             if (Frames[frame].undoTiles.Count > UndoBufferSize)
@@ -411,7 +409,7 @@ namespace ZSpriteMaker
         public void Redo(int DPI, PointeredImage main, PointeredImage layer, PointeredImage sheetImage)
         {
 
-            if (Frames[SelectedFrame].undoPos < Frames[SelectedFrame].undoTiles.Count-1)
+            if (Frames[SelectedFrame].undoPos < Frames[SelectedFrame].undoTiles.Count - 1)
             {
                 selectedTiles.Clear();
                 Frames[SelectedFrame].undoPos++;

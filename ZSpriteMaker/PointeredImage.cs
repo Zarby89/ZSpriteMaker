@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace ZSpriteMaker
 {
@@ -32,7 +29,7 @@ namespace ZSpriteMaker
                 Pointer[x + (y * width)] = value;
             }
         }
-        
+
 
         public byte this[int p]
         {
@@ -60,7 +57,7 @@ namespace ZSpriteMaker
             this.colors = colors;
             palettes = new BitmapPalette(colors);
             bitmap = new WriteableBitmap(width, height, dpi, dpi, PixelFormats.Indexed8, palettes);
-            
+
         }
 
         public void UpdateBitmap()
@@ -76,7 +73,7 @@ namespace ZSpriteMaker
             {
                 this[ox, oy] = data[i];
                 ox++;
-                if ((ox-x) >= w)
+                if ((ox - x) >= w)
                 {
                     ox = x;
                     oy++;
@@ -118,14 +115,14 @@ namespace ZSpriteMaker
                 }
             }
 
-            
+
 
             //UpdateBitmap();
         }
 
         public void DrawBitmapTile(int x, int y, int w, int h, int xSource, int ySource, int palSource, PointeredImage source, byte mx, byte my)
         {
-            for(int xl = 0; xl < w; xl++)
+            for (int xl = 0; xl < w; xl++)
             {
                 for (int yl = 0; yl < h; yl++)
                 {
@@ -145,7 +142,7 @@ namespace ZSpriteMaker
         {
             int ox = x;
             int oy = y;
-            for (int i = 0; i < (w*h); i++)
+            for (int i = 0; i < (w * h); i++)
             {
                 this[ox, oy] = data;
                 ox++;
@@ -168,7 +165,7 @@ namespace ZSpriteMaker
             ptr = Marshal.AllocHGlobal(width * height);
             colors = palettes.Colors.ToArray();
             bitmap = new WriteableBitmap(width, height, dpi, dpi, PixelFormats.Indexed8, palettes);
-            bitmap.WritePixels(new Int32Rect(0, 0, width, height), ptr, width*height, width);
+            bitmap.WritePixels(new Int32Rect(0, 0, width, height), ptr, width * height, width);
             ClearBitmap(clear);
         }
 
